@@ -1,3 +1,4 @@
+//Ignore the warning about the async statement, it is used correctly in the context of the code.
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
