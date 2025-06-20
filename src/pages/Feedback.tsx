@@ -4,11 +4,26 @@ const FeedbackForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
 
-  const handleSubmit = () => {
-    console.log('Email:', email);
-    console.log('Feedback:', feedback);
-    // Handle form submission here
-  };
+  const handleFeedback = async (email: string, message: string) => {
+  try {
+    const response = await fetch('http://localhost:5000/submitFeedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, message }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Submission failed');
+    }
+
+    alert('Feedback submitted successfully!');
+  } catch (error: any) {
+    console.error('Feedback error:', error);
+    alert('Failed to submit feedback: ' + error.message);
+  }
+};
 
   return (
     <div 
@@ -58,10 +73,10 @@ const FeedbackForm: React.FC = () => {
           <div className="flex justify-center pt-4">
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={handleFeedback.bind(null, email, feedback)}
               className="px-8 py-3 bg-[#BCB291] hover:bg-amber-300 text-gray-800 font-semibold text-lg rounded-full border-2 border-gray-400 transition-all duration-200 hover:shadow-lg transform hover:scale-105"
             >
-              Explore
+              Submit
             </button>
           </div>
         </div>

@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ZarvaFooter: React.FC = () => {
+  const navigate = useNavigate();
+
   const handleLinkClick = (linkName: string) => {
     console.log(`Clicked: ${linkName}`);
     // Add your navigation logic here
@@ -18,7 +21,12 @@ const ZarvaFooter: React.FC = () => {
               src="/logo.png" 
               alt="Zarva" 
               className="h-20 w-auto cursor-pointer filter brightness-0 invert"
-              onClick={() => handleLinkClick('Logo')}
+              onClick={() => {
+                  navigate('/'); // First navigate
+                  setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' }); // Then scroll after a short delay
+                }, 100); // Adjust delay if needed
+              }}
             />
           </div>
 
@@ -52,7 +60,7 @@ const ZarvaFooter: React.FC = () => {
             <div className="flex flex-col space-y-4">
               <h3 className="text-gray-400 text-sm font-normal mb-1">Earn with Zarva</h3>
               <button 
-                onClick={() => handleLinkClick('Register as Driver')}
+                onClick={() => navigate('/signup')}
                 className="text-white text-sm hover:text-gray-300 transition-colors text-left font-normal"
               >
                 Register as Driver
@@ -89,23 +97,53 @@ const ZarvaFooter: React.FC = () => {
           
           {/* Social Media Icons */}
           <div className="flex items-center space-x-3 mb-6 lg:mb-0">
-            <button 
-              onClick={() => handleLinkClick('Facebook')}
-              className="w-9 h-9 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-600 transition-colors"
-            >
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </button>
-            <button 
-              onClick={() => handleLinkClick('Twitter')}
-              className="w-9 h-9 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-600 transition-colors"
-            >
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </button>
-          </div>
+  {/* LinkedIn Button */}
+  <button 
+    onClick={() => window.open('https://www.linkedin.com/company/zarva', '_blank')}
+    className="w-9 h-9 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-600 transition-colors"
+  >
+    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 
+               5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 
+               19h-3v-10h3v10zm-1.5-11.28c-.97 0-1.75-.79-1.75-1.75 
+               0-.97.78-1.75 1.75-1.75s1.75.78 
+               1.75 1.75c0 .96-.78 1.75-1.75 
+               1.75zm13.5 11.28h-3v-5.6c0-1.34-.03-3.07-1.87-3.07-1.87 
+               0-2.16 1.46-2.16 2.97v5.7h-3v-10h2.88v1.36h.04c.4-.75 
+               1.38-1.54 2.85-1.54 3.05 0 3.62 2.01 3.62 4.62v5.56z"/>
+    </svg>
+  </button>
+
+  {/* Instagram Button */}
+  <button 
+    onClick={() => window.open('https://www.instagram.com/zarva.in', '_blank')}
+    className="w-9 h-9 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-600 transition-colors"
+  >
+    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.054 1.966.24 
+               2.43.4.61.2 1.05.44 1.51.89.46.46.69.9.89 
+               1.51.16.47.35 1.26.4 2.43.06 1.27.07 1.65.07 
+               4.85s-.01 3.584-.07 4.85c-.05 1.17-.24 1.96-.4 
+               2.43-.2.61-.44 1.05-.89 1.51-.46.46-.9.69-1.51.89-.47.16-1.26.35-2.43.4-1.27.06-1.65.07-4.85.07s-3.584-.01-4.85-.07c-1.17-.05-1.96-.24-2.43-.4a4.12 4.12 0 01-1.51-.89 4.12 4.12 0 01-.89-1.51c-.16-.47-.35-1.26-.4-2.43C2.21 15.584 2.2 15.2 2.2 
+               12s.01-3.584.07-4.85c.05-1.17.24-1.96.4-2.43a4.12 4.12 0 
+               01.89-1.51c.46-.46.9-.69 1.51-.89.47-.16 1.26-.35 2.43-.4C8.416 
+               2.212 8.8 2.2 12 2.2zm0-2.2C8.736 0 8.332.01 7.052.07 
+               5.776.13 4.787.336 3.95.68c-.9.37-1.658.86-2.418 1.62A6.95 
+               6.95 0 00.68 4.948C.336 5.785.13 6.774.07 8.05.01 9.332 
+               0 9.736 0 12c0 2.264.01 2.668.07 3.948.06 1.276.266 2.265.61 
+               3.102.37.9.86 1.658 1.62 2.418.76.76 1.518 1.25 
+               2.418 1.62.837.344 1.826.55 3.102.61C9.332 23.99 9.736 24 
+               12 24s2.668-.01 3.948-.07c1.276-.06 2.265-.266 3.102-.61.9-.37 
+               1.658-.86 2.418-1.62.76-.76 1.25-1.518 1.62-2.418.344-.837.55-1.826.61-3.102.06-1.28.07-1.684.07-3.948s-.01-2.668-.07-3.948c-.06-1.276-.266-2.265-.61-3.102a6.949 6.949 0 
+               00-1.62-2.418A6.949 6.949 0 0019.052.68C18.215.336 
+               17.226.13 15.95.07 14.668.01 14.264 0 12 
+               0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 
+               10.162a3.998 3.998 0 110-7.996 3.998 3.998 0 010 
+               7.996zm6.406-11.812a1.44 1.44 0 11-2.88 
+               0 1.44 1.44 0 012.88 0z"/>
+    </svg>
+  </button>
+</div>
 
           {/* Language and App Store Buttons */}
           <div className="flex items-center space-x-4">

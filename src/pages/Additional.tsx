@@ -1,6 +1,9 @@
 import { Headphones, MapPin, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ZarvaFeatures = () => {
+  const navigate = useNavigate();
+  const handleGetStarted = () => navigate('/feature');
   const features = [
     {
       icon: <Headphones className="w-8 h-8 text-gray-700 mb-4" />,
@@ -88,7 +91,9 @@ const ZarvaFeatures = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
             Empower your journey—drive with Zarva today!
           </h2>
-          <button className="px-8 py-3 rounded-full font-semibold text-gray-800 transition-all duration-300 hover:shadow-lg hover:scale-105"
+          <button 
+          onClick={handleGetStarted}
+          className="px-8 py-3 rounded-full font-semibold text-gray-800 transition-all duration-300 hover:shadow-lg hover:scale-105"
             style={{ backgroundColor: '#bcb291' }}
           >
             Explore

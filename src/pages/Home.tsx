@@ -317,7 +317,7 @@ const ZarvaApp: React.FC = () => {
                 <div className="text-right">
                   <button type="button" 
                           className="text-blue-600 hover:text-blue-700 text-sm transition-all duration-200 px-2 py-1 rounded mx-auto block">
-                    Forgot password?
+                    Forgot password ?
                   </button>
                 </div>
               )}

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
 import User from './models/User.ts'; // ✅ Ensure User.ts compiles to .js (or use esm loader)
+import Feedback from './models/Feedback.ts';
+import Driver from './models/Driver.ts'; 
 
 dotenv.config();
 
@@ -78,6 +80,55 @@ app.post('/loginUser', async (req, res) => {
     email: user.email,
     phone: user.phone
   });
+});
+
+app.post('/submitFeedback', async (req, res) => {
+  const { email, message } = req.body;
+
+  if (!email || !message) {
+    return res.status(400).json({ message: 'Email and message are required.' });
+  }
+
+  try {
+    const newFeedback = new Feedback({ email, message });
+    await newFeedback.save();
+    res.status(201).json({ message: 'Feedback saved successfully' });
+  } catch (error) {
+    console.error('Feedback saving error:', error);
+    res.status(500).json({ message: 'Server error saving feedback' });
+  }
+});
+
+app.post('/registerDriver', async (req: Request, res: Response) => {
+  const { fullName, mobile, email, vehicleModel, vehicleNumber, password } = req.body;
+
+  if (!fullName || !mobile || !email || !vehicleModel || !vehicleNumber || !password) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  try {
+    const existingDriver = await Driver.findOne({ email });
+    if (existingDriver) {
+      return res.status(409).json({ message: 'Driver already exists.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newDriver = new Driver({
+      fullName,
+      mobile,
+      email,
+      vehicleModel,
+      vehicleNumber,
+      password: hashedPassword
+    });
+
+    await newDriver.save();
+
+    res.status(201).json({ message: 'Driver registered successfully.' });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
 });
 
 // Start server

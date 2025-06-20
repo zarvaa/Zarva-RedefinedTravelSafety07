@@ -18,6 +18,7 @@ import ComingSoon from './pages/Comingsoon';
 import VoiceRecognition from './pages/VoiceRecognition';
 import Additional from './pages/Additional';
 import { AuthModalProvider } from './contexts/AuthModalContext';
+import Signup from './pages/Signup'
 
 // Layout component to wrap pages with Header
 const WithHeaderLayout = ({ children }: { children: React.ReactNode }) => (
@@ -84,6 +85,8 @@ function App() {
                 </WithHeaderLayout>
               </ProtectedRoute>
             } />
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </div>
       </Router>
