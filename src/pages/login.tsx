@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OAuthProvider } from 'appwrite';
-import { account, createSession, createOAuthSession } from '../appwrite';
+import { account, createOAuthSession } from '../appwrite';
 
 // Helper functions
 //const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -26,7 +26,7 @@ const LoginPage = () => {
     try {
       if (isLogin) {
         // Login via Appwrite session
-        const session = await createSession(email, password);
+        //const session = await createSession(email, password);
         const user = await account.get();
 
         localStorage.setItem('user', JSON.stringify(user));

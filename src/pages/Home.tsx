@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { createOAuthSession, account } from '../appwrite';
-import { ID, OAuthProvider } from 'appwrite';
+import { createOAuthSession } from '../appwrite';
+import {  OAuthProvider } from 'appwrite';
 import { useAuthModal } from '../contexts/AuthModalContext';
 
 // Helper
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+//const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const ZarvaApp: React.FC = () => {
   const navigate = useNavigate();
