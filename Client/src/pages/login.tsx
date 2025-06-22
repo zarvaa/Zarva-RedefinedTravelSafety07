@@ -44,7 +44,7 @@ const LoginPage = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:5000/addUser', {
+        const response = await fetch('https://zarva-redefinedtravelsafety-ne2y.onrender.com/addUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
