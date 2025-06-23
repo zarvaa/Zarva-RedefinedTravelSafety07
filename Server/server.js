@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
 import profileRoutes from './routes/profileRoutes.js';
+import resetRoutes from './routes/resetRoutes.js';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/driver", driverRoutes);
 app.use('/api', profileRoutes);
+app.use('/api/reset', resetRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

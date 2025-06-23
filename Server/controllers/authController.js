@@ -2,9 +2,9 @@ import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import { sendOTPEmail } from "../utils/email.js";
 
-const otpStore = new Map(); // Temporary OTP store (replace with DB in production)
+const otpStore = new Map(); // Temporary OTP store (use DB in production)
 
-// Send OTP for Signup
+// ✅ Send OTP for Signup
 export const sendSignupOTP = async (req, res) => {
   const { email } = req.body;
 
@@ -25,7 +25,7 @@ export const sendSignupOTP = async (req, res) => {
   }
 };
 
-// Final Signup after OTP verification
+// ✅ Final Signup after OTP verification
 export const addUser = async (req, res) => {
   const { name, email, password, phone, otp } = req.body;
 
@@ -63,7 +63,7 @@ export const addUser = async (req, res) => {
   }
 };
 
-// Login (No changes)
+// ✅ Login
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -79,4 +79,27 @@ export const loginUser = async (req, res) => {
     email: user.email,
     phone: user.phone,
   });
+};
+
+// ✅ Reset Password Directly
+export const resetPasswordDirect = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res.status(400).json({ message: "Email and new password are required." });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    res.status(500).json({ message: "Failed to reset password." });
+  }
 };
