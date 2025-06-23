@@ -1,7 +1,8 @@
 import User from "../models/User.js";
 import Driver from "../models/Driver.js";
+import bcrypt from "bcrypt";
 
-// USER
+// Get User Profile
 export const getUserProfile = async (req, res) => {
   const { email } = req.body;
   try {
@@ -13,14 +14,23 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
+// Update User Profile (Name, Phone, Password)
 export const updateUserProfile = async (req, res) => {
-  const { email, name, phone } = req.body;
+  const { email, name, phone, password } = req.body;
+
   try {
+    const updateData = { name, phone };
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
+
     const user = await User.findOneAndUpdate(
       { email },
-      { name, phone },
-      { new: true }
+      updateData,
+      { new: true, select: "-password" }
     );
+
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {
@@ -28,7 +38,7 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// DRIVER
+// Get Driver Profile
 export const getDriverProfile = async (req, res) => {
   const { email } = req.body;
   try {
@@ -40,14 +50,23 @@ export const getDriverProfile = async (req, res) => {
   }
 };
 
+// Update Driver Profile (Name, Phone, Vehicle Details, Password)
 export const updateDriverProfile = async (req, res) => {
-  const { email, fullName, mobile, vehicleModel, vehicleNumber } = req.body;
+  const { email, fullName, mobile, vehicleModel, vehicleNumber, password } = req.body;
+
   try {
+    const updateData = { fullName, mobile, vehicleModel, vehicleNumber };
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
+
     const driver = await Driver.findOneAndUpdate(
       { email },
-      { fullName, mobile, vehicleModel, vehicleNumber },
-      { new: true }
+      updateData,
+      { new: true, select: "-password" }
     );
+
     if (!driver) return res.status(404).json({ message: "Driver not found" });
     res.json(driver);
   } catch (err) {

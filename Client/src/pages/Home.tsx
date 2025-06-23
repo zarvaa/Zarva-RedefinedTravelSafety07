@@ -22,6 +22,8 @@ const ZarvaApp: React.FC = () => {
   // User Signup Specific
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
 
   // Driver Signup Specific
   const [fullName, setFullName] = useState("");
@@ -75,10 +77,35 @@ const ZarvaApp: React.FC = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/addUser", {
+      if (!otpSent) {
+        // Step 1: Send OTP
+        const response = await fetch(
+          "http://localhost:5000/api/auth/send-otp",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to send OTP");
+
+        alert("OTP sent to your email. Please check your inbox.");
+        setOtpSent(true);
+        return;
+      }
+
+      // Step 2: Verify OTP + Signup
+      if (!otp) {
+        setError("Please enter the OTP sent to your email.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone }),
+        body: JSON.stringify({ name, email, password, phone, otp }),
       });
 
       const user = await response.json();
@@ -98,7 +125,7 @@ const ZarvaApp: React.FC = () => {
 
   const handleUserLogin = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/loginUser", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -121,6 +148,47 @@ const ZarvaApp: React.FC = () => {
 
   const handleDriverSignup = async () => {
     try {
+      if (
+        !email ||
+        !password ||
+        !fullName ||
+        !mobile ||
+        !vehicleModel ||
+        !vehicleNumber
+      ) {
+        setError("Please fill all required fields.");
+        return;
+      }
+      if (password.length < 8) {
+        setError("Password must be at least 8 characters long.");
+        return;
+      }
+
+      if (!otpSent) {
+        // Step 1: Send OTP
+        const response = await fetch(
+          "http://localhost:5000/api/auth/send-otp",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to send OTP");
+
+        alert("OTP sent to your email. Please check your inbox.");
+        setOtpSent(true);
+        return;
+      }
+
+      // Step 2: Verify OTP + Signup
+      if (!otp) {
+        setError("Please enter the OTP sent to your email.");
+        return;
+      }
+
       const response = await fetch(
         "http://localhost:5000/api/driver/registerDriver",
         {
@@ -133,12 +201,14 @@ const ZarvaApp: React.FC = () => {
             vehicleModel,
             vehicleNumber,
             password,
+            otp,
           }),
         }
       );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Signup failed");
+
       alert("Driver registered successfully!");
       setIsLogin(true);
     } catch (error: any) {
@@ -440,6 +510,17 @@ const ZarvaApp: React.FC = () => {
                     Forgot password?
                   </button>
                 </div>
+              )}
+
+              {/* OTP Field (shown if OTP has been sent and not in login mode) */}
+              {!isLogin && otpSent && (
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                />
               )}
 
               {/* Submit */}
