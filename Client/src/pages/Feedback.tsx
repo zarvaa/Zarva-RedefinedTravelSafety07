@@ -6,7 +6,7 @@ const FeedbackForm: React.FC = () => {
 
   const handleFeedback = async (email: string, message: string) => {
   try {
-    const response = await fetch('http://localhost:5000/submitFeedback', {
+    const response = await fetch('http://localhost:5000/api/feedback/submitFeedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, message }),

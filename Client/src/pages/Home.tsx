@@ -65,7 +65,7 @@ const ZarvaApp: React.FC = () => {
             return;
           }
   
-          const response = await fetch('https://zarva-redefinedtravelsafety-ne2y.onrender.com/addUser', {
+          const response = await fetch('http://localhost:5000/api/auth/addUser', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password, phone }),
@@ -83,7 +83,7 @@ const ZarvaApp: React.FC = () => {
           closeModal();
         } else {
           // Login flow via MongoDB
-          const response = await fetch('https://zarva-redefinedtravelsafety-ne2y.onrender.com/loginUser', {
+          const response = await fetch('http://localhost:5000/api/auth/loginUser', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
