@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createOAuthSession } from "../appwrite";
 import { OAuthProvider } from "appwrite";
 import { useAuthModal } from "../contexts/AuthModalContext";
+import HomePage from "./HomePage";
 
 // Helper
 //const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -31,7 +32,7 @@ const ZarvaApp: React.FC = () => {
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
 
-  //reset-password
+    //reset-password
   // Forgot Password
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotUserType, setForgotUserType] = useState("user"); // or "driver"
@@ -131,7 +132,6 @@ const ZarvaApp: React.FC = () => {
       setError(err.message || "Something went wrong");
     }
   };
-
   //reset-password
   const handleSendResetOTP = async () => {
     if (!forgotEmail) {
@@ -334,7 +334,7 @@ const ZarvaApp: React.FC = () => {
   };
 
   // Example navigation handlers
-  const handleBookRide = () => navigate("/new");
+  const handleBookRide = () => navigate("/");
   const handleSaferRoutes = () => navigate("/location");
   const handleSpeechRecognition = () => navigate("/speech");
   const handleGetStarted = () => navigate("/feature");
@@ -360,53 +360,15 @@ const ZarvaApp: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 h-full flex flex-col">
-        {/* Logo */}
-        <div className="absolute top-5 left-10 z-20">
-          <img
-            src="/logo.png"
-            alt="ZARVA Logo"
-            className="h-20 w-auto brightness-0 invert hover:scale-105 transition-transform duration-300 cursor-pointer"
-            onClick={() => navigate("/")}
-          />
-        </div>
-
-        {/* Heading & Button */}
-        <div className="flex-1 flex flex-col justify-center items-end text-right gap-6 px-6 pb-32">
-          <h1 className="text-white text-5xl md:text-6xl mr-5 font-bold italic mb-8 leading-tight">
-            Redefining Travel Safety
-          </h1>
-
-          <button
-            onClick={isLoggedIn ? handleGetStarted : handleLogin}
-            className="bg-amber-200 hover:bg-amber-300 text-black px-10 py-3 mr-72 rounded-full font-medium text-lg transition-colors duration-200"
-          >
-            {isLoggedIn ? "Get Started" : "Login"}
-          </button>
-        </div>
-
-        {/* Bottom Navigation */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <div className="grid grid-cols-3">
-            {[
-              { label: "Book a Ride", onClick: handleBookRide },
-              { label: "Safer Routes", onClick: handleSaferRoutes },
-              { label: "Speech Recognition", onClick: handleSpeechRecognition },
-            ].map(({ label, onClick }, index) => (
-              <button
-                key={index}
-                onClick={onClick}
-                className="group relative p-6 text-center border-r border-white border-opacity-100 hover:bg-black hover:bg-opacity-30 transition-all duration-300"
-              >
-                <div className="text-white text-3xl mb-2 font-semibold group-hover:text-amber-300 transition-colors duration-300">
-                  {label}
-                </div>
-                <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-[3px] bg-amber-300 transition-all duration-300 group-hover:w-3/4 rounded"></span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+         <HomePage
+      isLoggedIn={isLoggedIn}
+      handleGetStarted={handleGetStarted}
+      handleLogin={handleLogin}
+      handleBookRide={handleBookRide}
+      handleSaferRoutes={handleSaferRoutes}
+      handleSpeechRecognition={handleSpeechRecognition}
+      navigate={navigate}
+    />
 
       {/* Login/Signup Modal */}
       {showLoginModal && (
@@ -489,7 +451,7 @@ const ZarvaApp: React.FC = () => {
             </div>
 
             {/* Header */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-6 ">
               <h2 className="text-2xl font-semibold text-gray-800">
                 {isLogin ? "Login" : "Sign Up"} - {isDriver ? "Driver" : "User"}
               </h2>
@@ -510,87 +472,166 @@ const ZarvaApp: React.FC = () => {
               {/* User Signup */}
               {!isDriver && !isLogin && (
                 <>
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Mobile Number"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-                  />
+                 <div className="relative">
+                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                     <img
+                       src="/account.png"
+                       alt="name"
+                       className="w-5 h-5"
+                     />
+                   </div>
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                   />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <img
+                        src="/call.png"
+                        alt="phone"
+                        className="w-5 h-5"
+                      />
+                    </div>
+                    <input
+                      type="tel"
+                      placeholder="Mobile Number"
+                      value={phone}
+                     onChange={(e) => setPhone(e.target.value)}
+                     className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                    />
+                  </div>
                 </>
-              )}
+               )
+              }
 
               {/* Driver Signup */}
               {isDriver && !isLogin && (
                 <>
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={fullName}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <img
+                        src="/account.png"
+                        alt="name"
+                        className="w-5 h-5"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                    className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
                   />
-                  <input
-                    type="tel"
-                    placeholder="Mobile Number"
-                    value={mobile}
+                  </div>
+
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <img
+                        src="/call.png"
+                        alt="phone"
+                        className="w-5 h-5"
+                      />
+                    </div>
+                    <input
+                      type="tel"
+                      placeholder="Mobile Number"
+                      value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-                  />
+                    className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                   />
+                  </div>
+
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <img
+                      src="/car.1.png"
+                      alt="vehicle"
+                      className="w-5 h-5"
+                    />
+                  </div>
                   <input
                     type="text"
                     placeholder="Vehicle Model"
                     value={vehicleModel}
                     onChange={(e) => setVehicleModel(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-                  />
+                    className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                   />
+                  </div>
+
+
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <img
+                      src="/car.1.png"
+                      alt="vehicle"
+                      className="w-5 h-5"
+                    />
+                  </div>
                   <input
                     type="text"
                     placeholder="Vehicle Number"
                     value={vehicleNumber}
                     onChange={(e) => setVehicleNumber(e.target.value)}
-                    className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-                  />
+                    className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                   />
+                  </div>
                 </>
               )}
 
               {/* Common Fields */}
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <img
+                      src="/message.png"
+                      alt="vehicle"
+                      className="w-5 h-5"
+                    />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-9 pr-3 py-3 border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                  />
+                </div>
+
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <img
+                    src="/lock key.png"
+                    alt="password"
+                    className="w-5 h-5"
+                  />
+                </div>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-9 pr-3 py-3  border border-gray-700 rounded-lg bg-white placeholder-gray-500 text-sm"
+                />
+              </div>
+
 
               {isLogin && (
-  <div className="text-right">
-    <button
-      type="button"
-      className="text-blue-600 hover:text-blue-700 text-sm"
-      onClick={() => setShowForgotPassword(!showForgotPassword)}  // This was missing
-    >
-      Forgot password?
-    </button>
-  </div>
-)}
-
-              
-              {showForgotPassword && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    className="text-blue-600 hover:text-blue-700 text-sm"
+                    onClick={() => setShowForgotPassword(!showForgotPassword)} 
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+                            {showForgotPassword && (
                 <div className="p-4 border mt-4">
                   <h3 className="font-bold mb-2">Forgot Password</h3>
 
@@ -659,6 +700,7 @@ const ZarvaApp: React.FC = () => {
               )}
 
               {/* Submit */}
+              <div className="flex justify-center">
               <button
                 onClick={(e) => {
                   if (isDriver) {
@@ -668,10 +710,13 @@ const ZarvaApp: React.FC = () => {
                   }
                 }}
                 disabled={isLoading}
-                className="w-full py-3 bg-[#bcb291] text-black font-semibold rounded-full hover:bg-amber-300 transition-all"
+                className="w-32 py-3 bg-[#bcb291] text-black font-semibold rounded-full hover:bg-[#9a9379] transition-all flex justify-center shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
               >
                 {isLoading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
               </button>
+              </div>
+
+              {/* Toggle between Login/Signup */}
 
               <p className="text-center text-sm text-gray-600">
                 {isLogin
@@ -687,12 +732,12 @@ const ZarvaApp: React.FC = () => {
             </div>
 
             {/* Divider */}
-            <div className="my-6 flex items-center justify-center">
-              <div className="w-full border-t border-gray-400"></div>
-              <span className="px-4 text-gray-600 text-sm">
+            <div className="my-6 flex items-center justify-center flex-row">
+              <div className="w-full border-t-4 border-[#bcb291]"></div>
+              <span className="px-4 text-gray-600 text-sm whitespace-nowrap">
                 or continue with
               </span>
-              <div className="w-full border-t border-gray-400"></div>
+              <div className="w-full border-t-4 border-[#bcb291]"></div>
             </div>
 
             {/* OAuth */}
@@ -700,14 +745,14 @@ const ZarvaApp: React.FC = () => {
               <button
                 onClick={() => handleOAuthLogin(OAuthProvider.Google)}
                 disabled={isLoading}
-                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-gray-300 border border-[#bcb291] rounded-full"
+                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-[#ceccc1] border border-[#bcb291] rounded-full"
               >
                 <img src="/google.png" alt="Google" className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleOAuthLogin(OAuthProvider.Apple)}
                 disabled={isLoading}
-                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-gray-300 border border-[#bcb291] rounded-full"
+                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-[#ceccc1] border border-[#bcb291] rounded-full"
               >
                 <svg
                   className="w-5 h-5 text-black"
@@ -720,7 +765,7 @@ const ZarvaApp: React.FC = () => {
               <button
                 onClick={() => handleOAuthLogin(OAuthProvider.Facebook)}
                 disabled={isLoading}
-                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-gray-300 border border-[#bcb291] rounded-full"
+                className="flex items-center justify-center w-16 h-10 bg-[#e1ded2] hover:bg-[#ceccc1] border border-[#bcb291] rounded-full"
               >
                 <span className="text-black font-bold text-lg">f</span>
               </button>

@@ -274,8 +274,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/reset/direct"
-        : "http://localhost:5000/api/reset/direct";
+        ? "http://localhost:5000/api/reset/reset-password-direct"
+        : "http://localhost:5000/api/reset/reaset-password-direct";
 
     try {
       const res = await fetch(endpoint, {
@@ -446,23 +446,27 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                 )}
 
                 <div className="pt-4 border-t border-[#bcb291] border-opacity-30 space-y-3">
-                  <button
-                    onClick={() => setPasswordMode(true)}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-[#bcb291] text-gray-800 rounded-lg hover:bg-[#a8a074] transition-all duration-200 font-medium"
-                    style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <Lock size={16} />
-                    <span>Change Password</span>
-                  </button>
-                  
-                  <button
-                    onClick={onLogout}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 font-medium"
-                    style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <LogOut size={16} />
-                    <span>Logout</span>
-                  </button>
+                  <div className="flex justify-center">
+                    <button
+                     onClick={() => setPasswordMode(true)}
+                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-[#bcb291] text-gray-800 rounded-full hover:bg-[#a8a074] transition-all duration-200 font-medium"
+                      style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <Lock size={16} />
+                      <span>Change Password</span>
+                    </button>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <button
+                      onClick={onLogout}
+                      className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 font-medium"
+                      style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </div>  
                 </div>
               </div>
             ) : editMode ? (
@@ -577,7 +581,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     name="currentPassword"
                     value={passwordData.currentPassword}
                     onChange={handlePasswordChange}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm text-gray-900 placeholder-gray-500"
                     style={{ color: '#1f2937' }}
                   />
                 </div>
@@ -589,7 +593,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     name="newPassword"
                     value={passwordData.newPassword}
                     onChange={handlePasswordChange}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm text-gray-900 placeholder-gray-500"
                     style={{ color: '#1f2937' }}
                   />
                 </div>
@@ -601,7 +605,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     name="confirmPassword"
                     value={passwordData.confirmPassword}
                     onChange={handlePasswordChange}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm text-gray-900 placeholder-gray-500"
                     style={{ color: '#1f2937' }}
                   />
                 </div>
@@ -609,7 +613,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                 <div className="flex space-x-2 pt-3">
                   <button
                     onClick={handlePasswordUpdate}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-[#a39b7e] text-white rounded-md hover:bg-[#bcb292] transition-colors text-sm"
                   >
                     <Save size={14} />
                     <span>Update</span>
