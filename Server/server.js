@@ -6,15 +6,22 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
-import profileRoutes from './routes/profileRoutes.js';
-import resetRoutes from './routes/resetRoutes.js';
+import profileRoutes from "./routes/profileRoutes.js";
+import resetRoutes from "./routes/resetRoutes.js";
+import notifyRoutes from "./routes/notifyRoutes.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend's URL
+    credentials: true, // Allow cookies to be sent
+  })
+);
+
 app.use(express.json());
 
 const uri = process.env.MONGODB_URI || "";
@@ -38,10 +45,10 @@ app.get("/", (_, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/driver", driverRoutes);
-app.use('/api', profileRoutes);
-app.use('/api/reset', resetRoutes);
+app.use("/api", profileRoutes);
+app.use("/api/reset", resetRoutes);
+app.use("/api", notifyRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-

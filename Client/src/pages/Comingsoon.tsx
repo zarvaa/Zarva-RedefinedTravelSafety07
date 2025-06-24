@@ -1,6 +1,24 @@
-
+import axios from "axios";
 
 export default function ComingSoon() {
+
+  const handleGetNotified = async () => {
+    try {
+      const email = localStorage.getItem("email");
+
+      if (!email) {
+        alert("Please login to get notified.");
+        return;
+      }
+
+      await axios.post("http://localhost:5000/api/notify", { email });
+      alert("You will be notified soon!");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong, please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       
@@ -21,7 +39,8 @@ export default function ComingSoon() {
       {/* Main Content */}
       <div className="relative z-30 flex items-center justify-center min-h-screen">
         <div className="text-center px-4 relative">
-          {/* Large Decorative Circles with Animations */}
+          
+          {/* Decorative Circles */}
           <div 
             className="absolute -top-40 -left-64 w-96 h-96 rounded-full animate-pulse"
             style={{
@@ -69,18 +88,9 @@ export default function ComingSoon() {
             </h1>
             
             <div className="flex justify-center space-x-4 mb-10">
-              <div 
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: '#654321' }}
-              ></div>
-              <div 
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: '#654321' }}
-              ></div>
-              <div 
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: '#654321' }}
-              ></div>
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
             </div>
             
             <div className="mb-8 max-w-md mx-auto">
@@ -96,11 +106,12 @@ export default function ComingSoon() {
               className="text-[#bcb291] px-14 py-5 rounded-full font-bold text-xl md:text-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               style={{ backgroundColor: '#654321' }}
               onMouseEnter={(e) => {
-  (e.target as HTMLElement).style.backgroundColor = '#A0522D';
-}}
-onMouseLeave={(e) => {
-  (e.target as HTMLElement).style.backgroundColor = '#654321';
-}}
+                (e.target as HTMLButtonElement).style.backgroundColor = '#A0522D';
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLButtonElement).style.backgroundColor = '#654321';
+              }}
+              onClick={handleGetNotified}
             >
               Get Notified
             </button>
@@ -108,8 +119,7 @@ onMouseLeave={(e) => {
         </div>
       </div>
 
-      
-      <style >{`
+      <style>{`
         @keyframes float {
           0%, 100% {
             transform: translateY(0px) scale(1);
@@ -118,7 +128,7 @@ onMouseLeave={(e) => {
             transform: translateY(-20px) scale(1.05);
           }
         }
-      `}</style>
+      `}</style>  
     </div>
   );
 }
