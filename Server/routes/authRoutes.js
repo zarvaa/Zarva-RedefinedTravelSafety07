@@ -3,12 +3,23 @@ import {
   sendSignupOTP,
   addUser,
   loginUser,
+  sendResetOTP,
+  verifyOTPAndResetPassword,
+  resetPasswordDirect
 } from "../controllers/authController.js";
 
 const router = express.Router();
 
-router.post("/send-otp", sendSignupOTP);
-router.post("/signup", addUser);
-router.post("/login", loginUser);
+// 🔒 Signup & Login
+router.post("/send-otp", sendSignupOTP);   // Send OTP for Signup
+router.post("/signup", addUser);           // Final Signup
+router.post("/login", loginUser);          // Login
+
+// 🔒 Forgot Password with OTP
+router.post("/reset/send-otp", sendResetOTP);                 // Send OTP for Password Reset
+router.post("/reset/verify", verifyOTPAndResetPassword);      // Verify OTP & Reset Password
+
+// 🔒 Optional: Direct Password Reset (without OTP) for testing
+router.post("/reset/direct", resetPasswordDirect);
 
 export default router;

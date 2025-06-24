@@ -274,8 +274,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/reset/reset-password-direct"
-        : "http://localhost:5000/api/reset/reaset-password-direct";
+        ? "http://localhost:5000/api/reset/direct"
+        : "http://localhost:5000/api/reset/direct";
 
     try {
       const res = await fetch(endpoint, {

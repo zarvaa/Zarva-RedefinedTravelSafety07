@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
-import resetRoutes from "./routes/resetRoutes.js";
+
 import notifyRoutes from "./routes/notifyRoutes.js";
 
 dotenv.config();
@@ -46,7 +46,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/driver", driverRoutes);
 app.use("/api", profileRoutes);
-app.use("/api/reset", resetRoutes);
+
 app.use("/api", notifyRoutes);
 
 app.listen(PORT, () => {

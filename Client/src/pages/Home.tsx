@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOAuthSession } from "../appwrite";
@@ -31,6 +30,15 @@ const ZarvaApp: React.FC = () => {
   const [mobile, setMobile] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
+
+  //reset-password
+  // Forgot Password
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotUserType, setForgotUserType] = useState("user"); // or "driver"
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [forgotNewPassword, setForgotNewPassword] = useState("");
+  const [otpSentForReset, setOtpSentForReset] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const [isDriver, setIsDriver] = useState(false); // Toggle User/Driver forms
 
@@ -121,6 +129,73 @@ const ZarvaApp: React.FC = () => {
     } catch (err: any) {
       console.error("Signup error:", err);
       setError(err.message || "Something went wrong");
+    }
+  };
+
+  //reset-password
+  const handleSendResetOTP = async () => {
+    if (!forgotEmail) {
+      alert("Enter your registered email");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/reset/send-otp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: forgotEmail,
+            userType: forgotUserType,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to send OTP");
+
+      alert("OTP sent to your email!");
+      setOtpSentForReset(true);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to send OTP");
+    }
+  };
+
+  //reset-password
+  const handleResetPassword = async () => {
+    if (!forgotEmail || !forgotOtp || !forgotNewPassword) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/reset/verify",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: forgotEmail,
+            otp: forgotOtp,
+            newPassword: forgotNewPassword,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to reset password");
+
+      alert("Password reset successful. You can now log in.");
+      setOtpSentForReset(false);
+      setForgotEmail("");
+      setForgotOtp("");
+      setForgotNewPassword("");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to reset password");
     }
   };
 
@@ -503,13 +578,72 @@ const ZarvaApp: React.FC = () => {
               />
 
               {isLogin && (
-                <div className="text-right">
-                  <button
-                    type="button"
-                    className="text-blue-600 hover:text-blue-700 text-sm"
+  <div className="text-right">
+    <button
+      type="button"
+      className="text-blue-600 hover:text-blue-700 text-sm"
+      onClick={() => setShowForgotPassword(!showForgotPassword)}  // This was missing
+    >
+      Forgot password?
+    </button>
+  </div>
+)}
+
+              
+              {showForgotPassword && (
+                <div className="p-4 border mt-4">
+                  <h3 className="font-bold mb-2">Forgot Password</h3>
+
+                  <input
+                    className="border p-2 w-full mb-2"
+                    type="email"
+                    placeholder="Registered Email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                  />
+
+                  <select
+                    className="border p-2 w-full mb-2"
+                    value={forgotUserType}
+                    onChange={(e) => setForgotUserType(e.target.value)}
                   >
-                    Forgot password?
-                  </button>
+                    <option value="user">User</option>
+                    <option value="driver">Driver</option>
+                  </select>
+
+                  {!otpSentForReset ? (
+                    <button
+                      className="bg-blue-600 text-white px-4 py-2 rounded"
+                      onClick={handleSendResetOTP}
+                    >
+                      Send OTP
+                    </button>
+                  ) : (
+                    <>
+                      <input
+                        className="border p-2 w-full mb-2"
+                        type="text"
+                        placeholder="Enter OTP"
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value)}
+                      />
+
+                      <input
+                        className="border p-2 w-full mb-2"
+                        type="password"
+                        placeholder="New Password"
+                        value={forgotNewPassword}
+                        onChange={(e) => setForgotNewPassword(e.target.value)}
+                      />
+
+                      <button
+                        className="bg-green-600 text-white px-4 py-2 rounded"
+                        onClick={handleResetPassword}
+                      >
+                        Reset Password
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 

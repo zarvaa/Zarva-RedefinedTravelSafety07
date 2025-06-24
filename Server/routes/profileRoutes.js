@@ -1,5 +1,6 @@
 import express from 'express';
 import { getUserProfile, updateUserProfile, getDriverProfile, updateDriverProfile } from '../controllers/profileController.js';
+import { resetPasswordDirect } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -10,6 +11,6 @@ router.put('/user/profile', updateUserProfile);
 // DRIVER Routes
 router.post('/driver/profile', getDriverProfile);
 router.put('/driver/profile', updateDriverProfile);
-
+router.post("/reset/direct", resetPasswordDirect);
 
 export default router;

@@ -82,7 +82,6 @@ export const loginUser = async (req, res) => {
   });
 };
 
-// ✅ Send OTP for Password Reset
 export const sendResetOTP = async (req, res) => {
   const { email, userType } = req.body;
 
@@ -90,17 +89,14 @@ export const sendResetOTP = async (req, res) => {
   if (!userType) return res.status(400).json({ message: "User type is required" });
 
   try {
-    // Check if user exists based on userType
     const model = userType === "driver" ? Driver : User;
     const user = await model.findOne({ email });
     
     if (!user) return res.status(404).json({ message: "Account not found with this email" });
 
-    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore.set(`reset_${email}`, { otp, expiresAt: Date.now() + 5 * 60 * 1000, userType });
 
-    // Send OTP email
     await sendOTPEmail(email, otp);
     res.json({ message: "Password reset OTP sent to email" });
   } catch (err) {
@@ -108,6 +104,7 @@ export const sendResetOTP = async (req, res) => {
     res.status(500).json({ message: "Failed to send reset OTP" });
   }
 };
+
 
 // ✅ Verify OTP and Reset Password
 export const verifyOTPAndResetPassword = async (req, res) => {
@@ -117,7 +114,6 @@ export const verifyOTPAndResetPassword = async (req, res) => {
     return res.status(400).json({ message: "Email, OTP, and new password are required" });
   }
 
-  // Get stored OTP data
   const stored = otpStore.get(`reset_${email}`);
   if (!stored) return res.status(400).json({ message: "OTP expired or not requested" });
   if (stored.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
@@ -127,18 +123,15 @@ export const verifyOTPAndResetPassword = async (req, res) => {
   }
 
   try {
-    // Get user model based on stored userType
     const model = stored.userType === "driver" ? Driver : User;
     const user = await model.findOne({ email });
     
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Update password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
 
-    // Clear OTP
     otpStore.delete(`reset_${email}`);
 
     return res.status(200).json({ message: "Password reset successful" });
@@ -147,6 +140,7 @@ export const verifyOTPAndResetPassword = async (req, res) => {
     res.status(500).json({ message: "Failed to reset password" });
   }
 };
+
 
 // ✅ Reset Password Directly
 export const resetPasswordDirect = async (req, res) => {

@@ -51,7 +51,7 @@ const Profile = () => {
 
       const data = await res.json();
       setProfile(data);
-      setFormData(data);
+      setFormData({ ...data, password: "" }); // Initialize password field empty
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -74,21 +74,41 @@ const Profile = () => {
         ? "http://localhost:5000/api/driver/profile"
         : "http://localhost:5000/api/user/profile";
 
-    const payload = { ...formData, email };
+    const { password, ...profileData } = formData;
 
     try {
+      // Update profile details
       const res = await fetch(endpoint, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...profileData, email }),
       });
 
-      if (!res.ok) throw new Error("Update failed");
+      if (!res.ok) throw new Error("Profile update failed");
 
       const updatedData = await res.json();
       setProfile(updatedData);
       setMessage("Profile updated successfully!");
+
+      // If password provided, trigger password reset
+      if (password && password.trim() !== "") {
+        const resetRes = await fetch("http://localhost:5000/api/auth/reset/direct", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            newPassword: password,
+            userType: role,
+          }),
+        });
+
+        if (!resetRes.ok) throw new Error("Password reset failed");
+
+        setMessage((prev) => prev + " Password updated successfully!");
+      }
+
       setEditMode(false);
+      setFormData({ ...updatedData, password: "" });
     } catch (err) {
       console.error(err);
       setMessage("Update failed. Please try again.");
@@ -99,14 +119,16 @@ const Profile = () => {
   if (!profile) return <p style={{ textAlign: "center" }}>Profile not found or not logged in.</p>;
 
   return (
-    <div style={{
-      maxWidth: "500px",
-      margin: "30px auto",
-      padding: "25px",
-      borderRadius: "15px",
-      boxShadow: "0 0 20px rgba(0,0,0,0.1)",
-      backgroundColor: "#fff"
-    }}>
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "30px auto",
+        padding: "25px",
+        borderRadius: "15px",
+        boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+        backgroundColor: "#fff",
+      }}
+    >
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>My Profile</h2>
 
       {message && <p style={{ color: "green", textAlign: "center" }}>{message}</p>}
@@ -187,7 +209,7 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Vehicle Details for Drivers */}
+      {/* Vehicle Details */}
       {"vehicleModel" in profile && (
         <>
           <div style={{ marginBottom: "15px" }}>
@@ -247,7 +269,7 @@ const Profile = () => {
             color: "#fff",
             border: "none",
             borderRadius: "5px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           {editMode ? "Cancel" : "Edit"}
@@ -262,7 +284,7 @@ const Profile = () => {
               color: "#fff",
               border: "none",
               borderRadius: "5px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           >
             Save
