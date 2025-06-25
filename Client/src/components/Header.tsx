@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Home, Menu, X, Shield, MapPin, User, ChevronDown, Edit, Save, XCircle, Lock } from "lucide-react";
+import { LogOut, Home, Menu, X, Shield, MapPin, User, ChevronDown, Edit, Save, XCircle } from "lucide-react";
 
 interface HeaderProps {
   showProfileSection?: boolean;
@@ -447,14 +447,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
                 <div className="pt-4 border-t border-[#bcb291] border-opacity-30 space-y-3">
                   <div className="flex justify-center">
-                    <button
-                     onClick={() => setPasswordMode(true)}
-                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-[#bcb291] text-gray-800 rounded-full hover:bg-[#a8a074] transition-all duration-200 font-medium"
-                      style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
-                    >
-                      <Lock size={16} />
-                      <span>Change Password</span>
-                    </button>
+                    
                   </div>
 
                   <div className="flex justify-center">

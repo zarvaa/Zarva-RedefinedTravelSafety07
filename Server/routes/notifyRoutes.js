@@ -11,10 +11,17 @@ router.post("/notify", async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
+    const existingNotification = await Notification.findOne({ email });
+
+    if (existingNotification) {
+      return res.json({ alreadyNotified: true });
+    }
+
     const newNotification = new Notification({ email });
     await newNotification.save();
 
-    res.status(201).json({ message: "Email saved successfully" });
+    res.status(201).json({ alreadyNotified: false });
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

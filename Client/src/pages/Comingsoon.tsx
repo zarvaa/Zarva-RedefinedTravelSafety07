@@ -1,22 +1,67 @@
-import axios from "axios";
+import { useState } from 'react';
+import { X, Check, Bell, Mail, Star, Sparkles } from 'lucide-react';
+
+type NotifyResponse = {
+  alreadyNotified: boolean;
+  message?: string;
+};
 
 export default function ComingSoon() {
+  const [showModal, setShowModal] = useState(false);
+  const [isAlreadyNotified, setIsAlreadyNotified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleGetNotified = async () => {
+    setIsLoading(true);
+    setErrorMessage('');
+    
     try {
-      const email = localStorage.getItem("email");
-
+      // Get email from localStorage
+      const email = localStorage.getItem('email');
+      
       if (!email) {
-        alert("Please login to get notified.");
+        setErrorMessage('No email found. Please make sure you are logged in.');
         return;
       }
 
-      await axios.post("http://localhost:5000/api/notify", { email });
-      alert("You will be notified soon!");
+      // Make actual API call
+      const response = await fetch("http://localhost:5000/api/notify", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: NotifyResponse = await response.json();
+      
+      setIsAlreadyNotified(data.alreadyNotified);
+      setShowModal(true);
+      
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong, please try again.");
+      console.error('API Error:', err);
+      
+      // Handle different types of errors
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setErrorMessage("Cannot connect to server. Please check if the API is running on localhost:5000");
+      } else if (err instanceof Error) {
+        setErrorMessage(err.message || "Something went wrong, please try again.");
+      } else {
+        setErrorMessage("An unexpected error occurred, please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setErrorMessage('');
   };
 
   return (
@@ -25,7 +70,7 @@ export default function ComingSoon() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
         style={{
-          backgroundImage: `url('background.z.jpg')`
+          backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:%23bcb291;stop-opacity:0.3" /><stop offset="100%" style="stop-color:%23654321;stop-opacity:0.1" /></radialGradient></defs><rect width="1000" height="1000" fill="url(%23grad1)"/></svg>')`
         }}
       />
       
@@ -88,9 +133,9 @@ export default function ComingSoon() {
             </h1>
             
             <div className="flex justify-center space-x-4 mb-10">
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#654321' }}></div>
+              <div className="w-4 h-4 rounded-full animate-pulse" style={{ backgroundColor: '#654321', animationDelay: '0s' }}></div>
+              <div className="w-4 h-4 rounded-full animate-pulse" style={{ backgroundColor: '#654321', animationDelay: '0.5s' }}></div>
+              <div className="w-4 h-4 rounded-full animate-pulse" style={{ backgroundColor: '#654321', animationDelay: '1s' }}></div>
             </div>
             
             <div className="mb-8 max-w-md mx-auto">
@@ -102,22 +147,178 @@ export default function ComingSoon() {
               </p>
             </div>
             
-            <button 
-              className="text-[#bcb291] px-14 py-5 rounded-full font-bold text-xl md:text-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-              style={{ backgroundColor: '#654321' }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = '#A0522D';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = '#654321';
-              }}
-              onClick={handleGetNotified}
-            >
-              Get Notified
-            </button>
+            {/* Error Message Display */}
+            {errorMessage && (
+              <div className="max-w-md mx-auto mb-6">
+                <p className="text-red-600 text-sm font-medium bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+                  {errorMessage}
+                </p>
+              </div>
+            )}
+            
+            <div className="max-w-md mx-auto mb-8">
+              <button 
+                className="text-[#bcb291] px-14 py-5 rounded-full font-bold text-xl md:text-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3 mx-auto"
+                style={{ backgroundColor: '#654321' }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLButtonElement).style.backgroundColor = '#A0522D';
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLButtonElement).style.backgroundColor = '#654321';
+                }}
+                onClick={handleGetNotified}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#bcb291]"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Bell className="w-6 h-6" />
+                    Get Notified
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Modal Overlay */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop with blur */}
+          <div 
+            className="absolute inset-0 backdrop-blur-md"
+            style={{ backgroundColor: 'rgba(101, 67, 33, 0.3)' }}
+            onClick={closeModal}
+          ></div>
+          
+          {/* Modal Card */}
+          <div className="relative z-10 max-w-md w-full mx-4 transform transition-all duration-300 animate-modalSlideIn">
+            <div 
+              className="rounded-3xl p-8 shadow-2xl border"
+              style={{
+                background: '#DBCFBF', 	
+                backdropFilter: 'blur(20px)',
+                borderColor: '#654321',
+                borderWidth: '2px',
+                boxShadow: '0 25px 50px -12px rgba(101, 67, 33, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                style={{ 
+                  backgroundColor: 'rgba(101, 67, 33, 0.2)',
+                  color: '#654321'
+                }}
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Success Icon */}
+              <div className="text-center mb-6">
+                <div 
+                  className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center animate-bounce"
+                  style={{ 
+                    backgroundColor: 'rgba(101, 67, 33, 0.2)',
+                    border: '3px solid #654321'
+                  }}
+                >
+                  {isAlreadyNotified ? (
+                    <Star className="w-10 h-10" style={{ color: '#654321' }} />
+                  ) : (
+                    <Check className="w-10 h-10" style={{ color: '#654321' }} />
+                  )}
+                </div>
+                
+                <div className="flex justify-center mb-2">
+                  <Sparkles className="w-6 h-6 mx-1" style={{ color: '#654321', animation: 'sparkle 2s ease-in-out infinite', animationDelay: '0s' }} />
+                  <Sparkles className="w-4 h-4 mx-1" style={{ color: '#654321', animation: 'sparkle 2s ease-in-out infinite', animationDelay: '0.5s' }} />
+                  <Sparkles className="w-6 h-6 mx-1" style={{ color: '#654321', animation: 'sparkle 2s ease-in-out infinite', animationDelay: '1s' }} />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="text-center">
+                <h3 
+                  className="text-3xl font-bold mb-4"
+                  style={{ 
+                    color: '#654321',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {isAlreadyNotified ? 'Welcome Back!' : 'You\'re In!'}
+                </h3>
+                
+                <p 
+                  className="text-lg mb-6 leading-relaxed"
+                  style={{ color: '#654321' }}
+                >
+                  {isAlreadyNotified 
+                    ? 'You are already part of the Zarva family! Stay tuned for exciting updates coming your way.'
+                    : 'You will be notified as soon as Zarva launches. Get ready for a safer ride experience!'
+                  }
+                </p>
+
+                {/* Features Preview */}
+                <div className="space-y-3 mb-6">
+                  <div 
+                    className="flex items-center justify-center gap-3 p-3 rounded-xl border"
+                    style={{ 
+                      backgroundColor: 'rgba(101, 67, 33, 0.2)',
+                      borderColor: '#654321',
+                      borderWidth: '1px'
+                    }}
+                  >
+                    <Mail className="w-5 h-5" style={{ color: '#654321' }} />
+                    <span style={{ color: '#654321' }} className="text-sm font-bold">
+                      Email notifications enabled
+                    </span>
+                  </div>
+                  
+                  <div 
+                    className="flex items-center justify-center gap-3 p-3 rounded-xl border"
+                    style={{ 
+                      backgroundColor: 'rgba(101, 67, 33, 0.2)',
+                      borderColor: '#654321',
+                      borderWidth: '1px'
+                    }}
+                  >
+                    <Bell className="w-5 h-5" style={{ color: '#654321' }} />
+                    <span style={{ color: '#654321' }} className="text-sm font-bold">
+                      Priority access guaranteed
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={closeModal}
+                  className="w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 transform"
+                  style={{ 
+                    backgroundColor: '#654321',
+                    color: '#bcb291',
+                    boxShadow: '0 10px 25px -5px rgba(101, 67, 33, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLButtonElement).style.backgroundColor = '#A0522D';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLButtonElement).style.backgroundColor = '#654321';
+                  }}
+                >
+                  Awesome! ✨
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes float {
@@ -127,6 +328,47 @@ export default function ComingSoon() {
           50% {
             transform: translateY(-20px) scale(1.05);
           }
+        }
+        
+        @keyframes modalSlideIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        
+        @keyframes sparkle {
+          0%, 100% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+        
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-modalSlideIn {
+          animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out;
         }
       `}</style>  
     </div>

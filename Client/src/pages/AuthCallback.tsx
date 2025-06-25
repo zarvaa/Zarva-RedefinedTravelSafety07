@@ -17,19 +17,29 @@ const AuthCallback = () => {
         // Get the current user session
         const session = await account.getSession('current');
         console.log('Session info:', session);
+
         const user = await account.get();
         console.log('User authenticated:', user);
         
         // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(user));
         
+        // If user.email exists, store it separately for convenience
+        if (user.email) {
+          localStorage.setItem('email', user.email);
+        }
+        
+        // You can also set role if applicable (optional)
+        localStorage.setItem('role', 'user');
+
         // Dispatch custom event
         window.dispatchEvent(new Event('userDataChanged'));
         
-        // Wait 10 seconds before redirecting to the feature page
+        // Redirect to feature page after slight delay
         setTimeout(() => {
           navigate('/feature');
         }, 1000);
+
       } catch (error) {
         console.error('Authentication callback error:', error);
         setError('Authentication failed. Please try again.');
@@ -37,14 +47,13 @@ const AuthCallback = () => {
         // Instead of redirecting to /login, open the login modal
         setTimeout(() => {
           openLoginModal();
-          navigate('/'); // Navigate to home page where the modal will be shown
+          navigate('/'); // Navigate to home page where modal will appear
         }, 3000);
       }
     };
 
     handleCallback();
   }, [navigate, openLoginModal]);
-
   return (
     <div className="min-h-screen flex flex-col" style={{
       backgroundImage: 'url("/bg.jpg")',
