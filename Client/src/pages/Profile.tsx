@@ -37,8 +37,8 @@ const Profile = () => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/driver/profile"
-        : "http://localhost:5000/api/user/profile";
+        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
+        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
 
     try {
       const res = await fetch(endpoint, {
@@ -71,8 +71,8 @@ const Profile = () => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/driver/profile"
-        : "http://localhost:5000/api/user/profile";
+        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
+        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
 
     const { password, ...profileData } = formData;
 
@@ -92,7 +92,7 @@ const Profile = () => {
 
       // If password provided, trigger password reset
       if (password && password.trim() !== "") {
-        const resetRes = await fetch("http://localhost:5000/api/auth/reset/direct", {
+        const resetRes = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/direct", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

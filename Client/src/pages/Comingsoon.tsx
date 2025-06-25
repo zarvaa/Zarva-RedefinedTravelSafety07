@@ -26,7 +26,7 @@ export default function ComingSoon() {
       }
 
       // Make actual API call
-      const response = await fetch("http://localhost:5000/api/notify", {
+      const response = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/notify", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

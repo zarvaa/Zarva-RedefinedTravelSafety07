@@ -90,7 +90,7 @@ const ZarvaApp: React.FC = () => {
       if (!otpSent) {
         // Step 1: Send OTP
         const response = await fetch(
-          "http://localhost:5000/api/auth/send-otp",
+          "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/send-otp",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -112,7 +112,7 @@ const ZarvaApp: React.FC = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, phone, otp }),
@@ -141,7 +141,7 @@ const ZarvaApp: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/reset/send-otp",
+        "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/send-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -172,7 +172,7 @@ const ZarvaApp: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/reset/verify",
+        "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -201,7 +201,7 @@ const ZarvaApp: React.FC = () => {
 
   const handleUserLogin = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -243,7 +243,7 @@ const ZarvaApp: React.FC = () => {
       if (!otpSent) {
         // Step 1: Send OTP
         const response = await fetch(
-          "http://localhost:5000/api/auth/send-otp",
+          "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/send-otp",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -266,7 +266,7 @@ const ZarvaApp: React.FC = () => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/driver/registerDriver",
+        "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/registerDriver",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -296,7 +296,7 @@ const ZarvaApp: React.FC = () => {
   const handleDriverLogin = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/driver/loginDriver",
+        "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/loginDriver",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

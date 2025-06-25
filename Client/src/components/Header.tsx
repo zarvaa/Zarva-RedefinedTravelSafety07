@@ -187,8 +187,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/driver/profile"
-        : "http://localhost:5000/api/user/profile";
+        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
+        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
 
     try {
       const res = await fetch(endpoint, {
@@ -227,8 +227,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/driver/profile"
-        : "http://localhost:5000/api/user/profile";
+        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
+        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
 
     const payload = { ...tempFormData, email }; // Use temporary data
 
@@ -274,8 +274,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "http://localhost:5000/api/reset/reset-password-direct"
-        : "http://localhost:5000/api/reset/reaset-password-direct";
+        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/reset/reset-password-direct"
+        : "https://zarva-redefinedtravelsafety17.onrender.com/api/reset/reaset-password-direct";
 
     try {
       const res = await fetch(endpoint, {
