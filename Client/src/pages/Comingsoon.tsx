@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { X, Check, Bell, Mail, Star, Sparkles } from 'lucide-react';
 
@@ -49,9 +48,10 @@ export default function ComingSoon() {
     }
   };
 
-    const closeModal = () => {
+  const closeModal = () => {
     setShowModal(false);
     setShowSuccessModal(false);
+    setIsAlreadyNotified(false); // Reset this to false
     setErrorMessage('');
     setEmail('');
   };
@@ -165,8 +165,8 @@ export default function ComingSoon() {
         </div>
       </div>
 
-      {/* Modal Overlay */}
-      {showModal && (
+      {/* Modal Overlay - Only show when NOT already notified */}
+      {showModal && !isAlreadyNotified && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div 
@@ -243,8 +243,8 @@ export default function ComingSoon() {
         </div>
       )}
 
-      {/* Success Modal */}
-      {isAlreadyNotified && (
+      {/* Success Modal - Show when already notified */}
+      {showModal && isAlreadyNotified && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-black bg-opacity-50"
