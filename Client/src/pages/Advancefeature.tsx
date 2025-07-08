@@ -42,14 +42,14 @@ const AdvancedFeatures = () => {
 
   const defaultIcon = (IconComponent: React.ElementType, index: number) => {
     if (customIcons[index]) {
-      return <img src={customIcons[index]} alt="Custom icon" className="w-20 h-20 object-contain transition-all duration-300 group-hover:scale-110 group-hover:brightness-110" />;
+      return <img src={customIcons[index]} alt="Custom icon" className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain transition-all duration-300 group-hover:scale-110 group-hover:brightness-110" />;
     }
-    return <IconComponent size={80} style={{ color: '#BCB291' }} className="transition-all duration-300 group-hover:scale-110" />;
+    return <IconComponent size={48} className="sm:w-16 sm:h-16 md:w-20 md:h-20 transition-all duration-300 group-hover:scale-110" style={{ color: '#BCB291' }} />;
   };
 
   return (
     <div 
-      className="min-h-screen p-8 relative"
+      className="min-h-screen p-4 sm:p-8 relative"
       style={{
         backgroundColor: '#2a2a2a',
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : `
@@ -70,7 +70,7 @@ const AdvancedFeatures = () => {
     >
       {/* Main Content */}
       <div className="relative z-10">
-        <h1 className="text-6xl font-bold text-center mb-20 animate-pulse" style={{ 
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 animate-pulse" style={{ 
           color: 'black',
           fontFamily: 'serif',
           letterSpacing: '0.02em',
@@ -79,11 +79,11 @@ const AdvancedFeatures = () => {
           Advanced Features
         </h1>
 
-        <div className="flex justify-center items-center gap-12 flex-wrap max-w-7xl mx-auto">
+        <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 flex-wrap max-w-7xl mx-auto">
           {cardData.map((card, index) => (
             <div
               key={index}
-              className="group relative w-80 h-[28rem] cursor-pointer transition-all duration-500 ease-out hover:scale-105"
+              className="group relative w-60 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[28rem] cursor-pointer transition-all duration-500 ease-out hover:scale-105"
               onClick={() => toggleCard(index)}
               onMouseEnter={() => setHoveredCard(index)}
               onMouseLeave={() => setHoveredCard(null)}
@@ -106,7 +106,7 @@ const AdvancedFeatures = () => {
               >
                 {/* Front of card */}
                 <div 
-                  className="absolute inset-0 w-full h-full rounded-3xl flex flex-col items-center justify-center p-8 text-center backface-hidden shadow-2xl transition-all duration-500"
+                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center backface-hidden shadow-2xl transition-all duration-500"
                   style={{ 
                     background: hoveredCard === index 
                       ? `linear-gradient(180deg, 
@@ -129,19 +129,19 @@ const AdvancedFeatures = () => {
                           #000000 40%)`,
                     border: hoveredCard === index ? '2px solid #BCB291' : '1px solid #BCB291',
                     backfaceVisibility: 'hidden',
-                    borderRadius: '24px',
+                    borderRadius: '16px',
                   }}
                 >
-                  <div className="mb-8 transition-all duration-300 group-hover:animate-bounce">
+                  <div className="mb-4 sm:mb-6 md:mb-8 transition-all duration-300 group-hover:animate-bounce">
                     {defaultIcon(card.icon, index)}
                   </div>
                   <h3 
-                    className="text-3xl font-light leading-tight transition-all duration-300 group-hover:text-white" 
+                    className="text-xl sm:text-2xl md:text-3xl font-light leading-tight transition-all duration-300 group-hover:text-white" 
                     style={{ 
                       color: hoveredCard === index ? '#ffffff' : '#BCB291',
                       fontFamily: 'Playfair display',
                       letterSpacing: '0.02em',
-                      fontSize: '3.6rem',
+                      fontSize: 'clamp(1.5rem, 4vw, 3.6rem)',
                       textShadow: hoveredCard === index ? '0 0 20px rgba(188, 178, 145, 0.5)' : 'none'
                     }}
                   >
@@ -150,13 +150,13 @@ const AdvancedFeatures = () => {
                   
                   {/* Hover indicator */}
                   <div 
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 transition-all duration-300"
+                    className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 transition-all duration-300"
                     style={{
                       opacity: hoveredCard === index ? 1 : 0,
                       transform: `translateX(-50%) translateY(${hoveredCard === index ? '0' : '10px'})`,
                     }}
                   >
-                    <div className="text-sm text-white bg-black bg-opacity-50 px-3 py-1 rounded-full">
+                    <div className="text-xs sm:text-sm text-white bg-black bg-opacity-50 px-2 sm:px-3 py-1 rounded-full">
                       Click to flip
                     </div>
                   </div>
@@ -164,7 +164,7 @@ const AdvancedFeatures = () => {
 
                 {/* Back of card */}
                 <div 
-                  className="absolute inset-0 w-full h-full rounded-3xl flex flex-col items-center justify-center p-8 text-center backface-hidden rotate-y-180 shadow-2xl transition-all duration-500"
+                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center backface-hidden rotate-y-180 shadow-2xl transition-all duration-500"
                   style={{ 
                     background: hoveredCard === index 
                       ? `linear-gradient(185deg, 
@@ -183,18 +183,18 @@ const AdvancedFeatures = () => {
                   }}
                 >
                   <p 
-                    className="text-base leading-relaxed mb-8 transition-all duration-300" 
+                    className="text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6 md:mb-8 transition-all duration-300" 
                     style={{ 
                       color: hoveredCard === index ? '#ffffff' : '#BCB291',
                       fontFamily: 'sans-serif',
                       lineHeight: '1.6',
-                      fontSize: '1.4rem'
+                      fontSize: 'clamp(0.9rem, 2.5vw, 1.4rem)'
                     }}
                   >
                     {card.backContent}
                   </p>
                   <button 
-                    className="px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-110 hover:shadow-lg text-sm"
+                    className="px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-110 hover:shadow-lg text-xs sm:text-sm"
                     style={{ 
                       backgroundColor: hoveredCard === index ? '#ffffff' : '#BCB291',
                       color: hoveredCard === index ? '#2a2a2a' : '#2a2a2a',
@@ -219,7 +219,7 @@ const AdvancedFeatures = () => {
               
               {/* Glowing border effect on hover */}
               <div 
-                className="absolute inset-0 rounded-3xl pointer-events-none transition-all duration-500"
+                className="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none transition-all duration-500"
                 style={{
                   background: hoveredCard === index 
                     ? 'linear-gradient(45deg, transparent, rgba(188, 178, 145, 0.1), transparent)'

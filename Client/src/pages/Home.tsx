@@ -8,15 +8,34 @@ import HomePage from "./HomePage";
 // Helper
 //const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const ZarvaApp: React.FC = () => {
+type ZarvaAppProps = {
+  initialRole?: "user" | "driver";
+  initialMode?: "login" | "signup";
+};
+
+const ZarvaApp: React.FC<ZarvaAppProps> = ({ initialRole = "user", initialMode = "login" }) => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(initialMode === "login");
+  const [isDriver, setIsDriver] = useState(initialRole === "driver");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { showLoginModal, closeLoginModal, openLoginModal } = useAuthModal();
+  const { showLoginModal, closeLoginModal, openLoginModal,mode, role} = useAuthModal();
+
+  useEffect(() => {
+  const userData = localStorage.getItem("user");
+  if (userData) {
+    setIsLoggedIn(true);
+  }
+}, []);
+
+// 🔽 Add this one below
+useEffect(() => {
+  setIsLogin(mode === 'login');
+  setIsDriver(role === 'driver');
+}, [mode, role]);
 
   // Common States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,7 +60,6 @@ const ZarvaApp: React.FC = () => {
   const [otpSentForReset, setOtpSentForReset] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const [isDriver, setIsDriver] = useState(false); // Toggle User/Driver forms
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -86,7 +104,7 @@ const ZarvaApp: React.FC = () => {
         setError("Password must be at least 8 characters long.");
         return;
       }
-
+ 
       if (!otpSent) {
         // Step 1: Send OTP
         const response = await fetch(
@@ -401,54 +419,6 @@ const ZarvaApp: React.FC = () => {
                 />
               </svg>
             </button>
-
-            {/* Toggle User/Driver */}
-            <div className="flex justify-center mb-6">
-              <button
-                onClick={() => {
-                  setIsDriver(false);
-                  setIsLogin(true);
-                  setError("");
-                  setEmail("");
-                  setPassword("");
-                  setName("");
-                  setPhone("");
-                  setFullName("");
-                  setMobile("");
-                  setVehicleModel("");
-                  setVehicleNumber("");
-                }}
-                className={`px-4 py-2 text-sm font-medium rounded-l-full ${
-                  !isDriver
-                    ? "bg-[#bcb291] text-black"
-                    : "bg-white text-gray-700"
-                }`}
-              >
-                User
-              </button>
-              <button
-                onClick={() => {
-                  setIsDriver(true);
-                  setIsLogin(true);
-                  setError("");
-                  setEmail("");
-                  setPassword("");
-                  setName("");
-                  setPhone("");
-                  setFullName("");
-                  setMobile("");
-                  setVehicleModel("");
-                  setVehicleNumber("");
-                }}
-                className={`px-4 py-2 text-sm font-medium rounded-r-full ${
-                  isDriver
-                    ? "bg-[#bcb291] text-black"
-                    : "bg-white text-gray-700"
-                }`}
-              >
-                Driver
-              </button>
-            </div>
 
             {/* Header */}
             <div className="text-center mb-6 ">

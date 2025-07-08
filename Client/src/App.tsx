@@ -2,7 +2,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-
+import ZarvaApp from './pages/Home';
 import Home from './pages/Home';
 import Doyouknow from './pages/Doyouknow';
 import OurService from './pages/OurService';
@@ -98,6 +98,14 @@ function App() {
               
             
             {/* Additional routes */}
+            <Route
+  path="/driver-signup"
+  element={
+    <WithHeaderLayout>
+      <ZarvaApp initialRole="driver" initialMode="signup" />
+    </WithHeaderLayout>
+  }
+/>
           </Routes>
         </div>
       </Router>

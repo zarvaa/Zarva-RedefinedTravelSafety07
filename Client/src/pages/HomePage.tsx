@@ -72,18 +72,30 @@ const HomePage: React.FC<Props> = ({
   const renderContent = () => {
     if (currentSection === "Safer Routes") {
       return (
-        <div className="absolute top-1/2 right-20 transform -translate-y-1/2 z-20 text-center">
+        <div className="absolute top-1/2 right-4 sm:right-20 transform -translate-y-1/2 z-20 text-center">
           <div
-            className="text-white font-bold text-6xl italic mb-8"
+            className="text-white font-bold text-3xl sm:text-6xl italic mb-4 sm:mb-8"
             style={{
-              minHeight: "80px",
-              width: "300px",
+              minHeight: "40px",
+              width: "200px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               perspective: "1000px",
               transformStyle: "preserve-3d",
             }}
+            // Mobile responsive min-height and width
+            {...(window.innerWidth < 640 && {
+              style: {
+                minHeight: "40px",
+                width: "150px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                perspective: "1000px",
+                transformStyle: "preserve-3d",
+              }
+            })}
           >
             <div
               className="transform-gpu"
@@ -106,7 +118,7 @@ const HomePage: React.FC<Props> = ({
           </div>
           <button
             onClick={isLoggedIn ? handleGetStarted : handleLogin}
-            className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-8 py-3 rounded-full font-medium text-lg transition-all duration-200 hover:scale-105"
+            className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-4 py-2 sm:px-8 sm:py-3 rounded-full font-medium text-sm sm:text-lg transition-all duration-200 hover:scale-105"
           >
             {isLoggedIn ? "Get Started" : "Sign Up"}
           </button>
@@ -116,13 +128,13 @@ const HomePage: React.FC<Props> = ({
 
     if (currentSection === "Speech Recognition") {
       return (
-        <div className="absolute top-1/2 left-20 transform -translate-y-1/2 z-20 max-w-md">
-          <h2 className="text-white font-bold text-4xl italic mb-8 leading-tight">
+        <div className="absolute top-1/2 left-4 sm:left-20 transform -translate-y-1/2 z-20 max-w-xs sm:max-w-md">
+          <h2 className="text-white font-bold text-2xl sm:text-4xl italic mb-4 sm:mb-8 leading-tight">
             With Zarva, every journey is protected, every moment is secure.
           </h2>
           <button
             onClick={isLoggedIn ? handleGetStarted : handleLogin}
-            className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-8 py-3 rounded-full font-medium text-lg transition-all duration-200 hover:scale-105"
+            className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-4 py-2 sm:px-8 sm:py-3 rounded-full font-medium text-sm sm:text-lg transition-all duration-200 hover:scale-105"
           >
             {isLoggedIn ? "Get Started" : "Sign Up"}
           </button>
@@ -131,13 +143,13 @@ const HomePage: React.FC<Props> = ({
     }
 
     return (
-      <div className="flex-1 flex flex-col justify-center items-end text-right gap-6 px-6 pb-32">
-        <h1 className="text-white text-5xl md:text-6xl mr-5 font-bold italic mb-8 leading-tight">
+      <div className="flex-1 flex flex-col justify-center items-end text-right gap-6 px-4 sm:px-6 pb-32">
+        <h1 className="text-white text-3xl sm:text-5xl md:text-6xl mr-2 sm:mr-5 font-bold italic mb-4 sm:mb-8 leading-tight">
           Redefining Travel Safety
         </h1>
         <button
           onClick={isLoggedIn ? handleGetStarted : handleLogin}
-          className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-10 py-3 mr-72 rounded-full font-medium text-lg transition-colors duration-200"
+          className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-6 py-2 sm:px-10 sm:py-3 mr-4 sm:mr-72 rounded-full font-medium text-sm sm:text-lg transition-colors duration-200"
         >
           {isLoggedIn ? "Get Started" : "Sign Up"}
         </button>
@@ -146,7 +158,7 @@ const HomePage: React.FC<Props> = ({
   };
 
   return (
-    <div className="fade-in-scale min-h-screen relative bg-black">
+    <div className="fade-in-scale h-[50vh] sm:min-h-screen relative bg-black overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
         style={{
@@ -156,12 +168,12 @@ const HomePage: React.FC<Props> = ({
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col min-h-screen">
-        <div className="absolute top-5 left-10 z-20">
+      <div className="relative z-10 h-full flex flex-col h-[50vh] sm:min-h-screen">
+        <div className="absolute top-2 sm:top-5 left-4 sm:left-10 z-20">
           <img
             src="/logo.png"
             alt="ZARVA Logo"
-            className="h-20 w-auto brightness-0 invert hover:scale-105 transition-transform duration-300 cursor-pointer"
+            className="h-12 sm:h-20 w-auto brightness-0 invert hover:scale-105 transition-transform duration-300 cursor-pointer"
             onClick={() => navigate("/")}
           />
         </div>
@@ -181,7 +193,7 @@ const HomePage: React.FC<Props> = ({
                 }}
                 onMouseEnter={() => setHoveredSection(label)}
                 onMouseLeave={() => setHoveredSection(null)}
-                className={`group relative p-6 text-center ${
+                className={`group relative p-3 sm:p-6 text-center ${
                   index < 2 ? "border-r border-white border-opacity-100" : ""
                 } hover:bg-black hover:bg-opacity-30 transition-all duration-300 ${
                   activeSection === label || hoveredSection === label || currentSection === label
@@ -190,7 +202,7 @@ const HomePage: React.FC<Props> = ({
                 }`}
               >
                 <div
-                  className={`text-3xl mb-2 font-semibold transition-colors duration-300 ${
+                  className={`text-lg sm:text-3xl mb-1 sm:mb-2 font-semibold transition-colors duration-300 ${
                     activeSection === label || hoveredSection === label || currentSection === label
                       ? "text-[#bcb291]"
                       : "text-white group-hover:text-amber-300"
@@ -198,7 +210,7 @@ const HomePage: React.FC<Props> = ({
                 >
                   {label}
                 </div>
-                <span className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-[3px] bg-amber-300 transition-all duration-300 group-hover:w-3/4 rounded"></span>
+                <span className="absolute bottom-1 sm:bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-[2px] sm:h-[3px] bg-amber-300 transition-all duration-300 group-hover:w-3/4 rounded"></span>
               </button>
             ))}
           </div>

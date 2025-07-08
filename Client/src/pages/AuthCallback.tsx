@@ -5,55 +5,54 @@ import { useAuthModal } from '../contexts/AuthModalContext';
 
 const AuthCallback = () => {
   const [error, setError] = useState('');
+  const [isDriver, setIsDriver] = useState(false); // 👈 Track if it's a driver
+  const [showLoader, setShowLoader] = useState(false); // 👈 Control loader rendering
   const navigate = useNavigate();
   const { openLoginModal } = useAuthModal();
 
   useEffect(() => {
     const handleCallback = async () => {
-      console.log('Auth callback initiated');
-      console.log('Current URL:', window.location.href);
-      
       try {
-        // Get the current user session
         const session = await account.getSession('current');
-        console.log('Session info:', session);
-
         const user = await account.get();
-        console.log('User authenticated:', user);
-        
-        // Store user data in localStorage
+
+        // 👇 Determine if this is a driver login
+        const isDriverLogin = user.email?.includes("driver"); // customize as needed
+        setIsDriver(isDriverLogin);
+
+        // Store user info
         localStorage.setItem('user', JSON.stringify(user));
-        
-        // If user.email exists, store it separately for convenience
-        if (user.email) {
-          localStorage.setItem('email', user.email);
-        }
-        
-        // You can also set role if applicable (optional)
-        localStorage.setItem('role', 'user');
-
-        // Dispatch custom event
+        localStorage.setItem('email', user.email);
+        localStorage.setItem('role', isDriverLogin ? 'driver' : 'user');
         window.dispatchEvent(new Event('userDataChanged'));
-        
-        // Redirect to feature page after slight delay
-        setTimeout(() => {
-          navigate('/feature');
-        }, 1000);
 
-      } catch (error) {
-        console.error('Authentication callback error:', error);
+        if (isDriverLogin) {
+          // 🚗 Driver: Show loader for a few seconds
+          setShowLoader(true);
+          setTimeout(() => {
+            navigate('/feature'); // or /driver-dashboard if needed
+          }, 1500);
+        } else {
+          // 👤 User: Redirect immediately
+          navigate('/feature');
+        }
+
+      } catch (err) {
+        console.error('OAuth login failed:', err);
         setError('Authentication failed. Please try again.');
-        
-        // Instead of redirecting to /login, open the login modal
         setTimeout(() => {
           openLoginModal();
-          navigate('/'); // Navigate to home page where modal will appear
+          navigate('/');
         }, 3000);
       }
     };
 
     handleCallback();
   }, [navigate, openLoginModal]);
+
+  // ✅ Only show loader if it's a driver
+  if (!showLoader && !error) return null;
+  
   return (
     <div className="min-h-screen flex flex-col" style={{
       backgroundImage: 'url("/bg.jpg")',
