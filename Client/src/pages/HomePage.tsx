@@ -37,7 +37,6 @@ const HomePage: React.FC<Props> = ({
 
   const currentSection = activeSection || hoveredSection || sections[autoRotateIndex];
 
-  // Continuous background auto-rotation unless user clicked (activeSection)
   useEffect(() => {
     if (!activeSection) {
       const interval = setInterval(() => {
@@ -47,7 +46,6 @@ const HomePage: React.FC<Props> = ({
     }
   }, [activeSection]);
 
-  // Word animation for "Safer Routes"
   useEffect(() => {
     if (currentSection === "Safer Routes") {
       const interval = setInterval(() => {
@@ -76,26 +74,14 @@ const HomePage: React.FC<Props> = ({
           <div
             className="text-white font-bold text-3xl sm:text-6xl italic mb-4 sm:mb-8"
             style={{
-              minHeight: "40px",
-              width: "200px",
+              minHeight: window.innerWidth < 640 ? "40px" : "60px",
+              width: window.innerWidth < 640 ? "150px" : "200px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               perspective: "1000px",
               transformStyle: "preserve-3d",
             }}
-            // Mobile responsive min-height and width
-            {...(window.innerWidth < 640 && {
-              style: {
-                minHeight: "40px",
-                width: "150px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                perspective: "1000px",
-                transformStyle: "preserve-3d",
-              }
-            })}
           >
             <div
               className="transform-gpu"
@@ -158,14 +144,17 @@ const HomePage: React.FC<Props> = ({
   };
 
   return (
-    <div className="fade-in-scale h-[50vh] sm:min-h-screen relative bg-black overflow-hidden">
+    <div className="fade-in-scale h-screen sm:min-h-screen relative bg-black overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
         style={{
           backgroundImage: `url('${sectionImages[currentSection as keyof typeof sectionImages]}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
       <div className="relative z-10 h-full flex flex-col h-[50vh] sm:min-h-screen">
