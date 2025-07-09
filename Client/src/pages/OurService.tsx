@@ -52,7 +52,7 @@ const ServicesPage: React.FC = () => {
 
             {/* Card 2 */}
             <div className="group bg-white rounded-lg sm:rounded-3xl p-2 sm:p-5 ml-0 sm:ml-12 mr-0 sm:mr-16 transition-all duration-500 border border-transparent hover:border-[#BCB291] hover:shadow-[0_0_25px_#BCB291] hover:border-b-4 hover:scale-105 hover:bg-[#f8f6f0]">
-              <div className="flex flex-row sm:flex-row items-center sm:items-start gap-2 sm:gap-6 py-1 sm:py-3 px-1 sm:px-3 md:px-5 text-left">
+              <div className="flex flex-row-reverse sm:flex-row items-center sm:items-start gap-2 sm:gap-6 py-1 sm:py-3 px-1 sm:px-3 md:px-5 text-left">
                 <img
                   src="/3.jpg"
                   alt="Worry Free Ride"
