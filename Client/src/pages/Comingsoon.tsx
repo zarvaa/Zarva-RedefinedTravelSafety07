@@ -10,38 +10,51 @@ export default function ComingSoon() {
   const [email, setEmail] = useState('');
 
   const handleGetNotified = async () => {
-    setIsLoading(true);
-    setErrorMessage('');
-    
-    try {
-      if (!email) {
-        setErrorMessage('Please enter your email address.');
-        return;
-      }
+  setIsLoading(true);
+  setErrorMessage('');
 
-      // Simple email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        setErrorMessage('Please enter a valid email address.');
-        return;
-      }
-
-      // Simulate API call for demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate random response
-      const isAlreadyNotified = Math.random() < 0.5;
-      
-      setIsAlreadyNotified(isAlreadyNotified);
-      setShowModal(true);
-      
-    } catch (err) {
-      console.error('API Error:', err);
-      setErrorMessage("An unexpected error occurred, please try again.");
-    } finally {
-      setIsLoading(false);
+  try {
+    if (!email) {
+      setErrorMessage('Please enter your email address.');
+      return;
     }
-  };
+
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    // ✅ Real API call to /api/notify
+    const response = await fetch('https://zarva-redefinedtravelsafety17.onrender.com/api/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Something went wrong');
+    }
+
+    setIsAlreadyNotified(result.alreadyNotified || false);
+    setShowModal(true);
+  } catch (err) {
+    console.error('API Error:', err);
+    if (err instanceof Error) {
+      setErrorMessage(err.message || 'An unexpected error occurred, please try again.');
+    } else {
+      setErrorMessage('An unexpected error occurred, please try again.');
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const closeModal = () => {
     setShowModal(false);
