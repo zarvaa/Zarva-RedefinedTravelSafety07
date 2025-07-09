@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import { X, Check, Bell, Mail, Star, Sparkles } from 'lucide-react';
+import { X, Check, Bell, Mail } from 'lucide-react';
 
-type NotifyResponse = {
-  alreadyNotified: boolean;
-  message?: string;
-};
 
 export default function ComingSoon() {
   const [showModal, setShowModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isAlreadyNotified, setIsAlreadyNotified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -50,7 +45,7 @@ export default function ComingSoon() {
 
   const closeModal = () => {
     setShowModal(false);
-    setShowSuccessModal(false);
+    setShowModal(false);
     setIsAlreadyNotified(false); // Reset this to false
     setErrorMessage('');
     setEmail('');

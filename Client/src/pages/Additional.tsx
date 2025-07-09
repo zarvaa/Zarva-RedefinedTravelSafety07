@@ -1,10 +1,8 @@
 import { Headphones, MapPin, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useAuthModal } from "../contexts/AuthModalContext";
 
 
 const ZarvaFeatures = () => {
-  const navigate = useNavigate();
   const { openLoginModal } = useAuthModal();
   const handleGetStarted = () => {
   openLoginModal("signup", "driver"); // Open the modal

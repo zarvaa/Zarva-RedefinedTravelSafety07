@@ -5,7 +5,7 @@ import { useAuthModal } from '../contexts/AuthModalContext';
 
 const AuthCallback = () => {
   const [error, setError] = useState('');
-  const [isDriver, setIsDriver] = useState(false); // 👈 Track if it's a driver
+  // Removed unused isDriver state
   const [showLoader, setShowLoader] = useState(false); // 👈 Control loader rendering
   const navigate = useNavigate();
   const { openLoginModal } = useAuthModal();
@@ -13,12 +13,12 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const session = await account.getSession('current');
+        await account.getSession('current');
         const user = await account.get();
 
         // 👇 Determine if this is a driver login
         const isDriverLogin = user.email?.includes("driver"); // customize as needed
-        setIsDriver(isDriverLogin);
+        // Removed setIsDriver as isDriver state is unused
 
         // Store user info
         localStorage.setItem('user', JSON.stringify(user));
