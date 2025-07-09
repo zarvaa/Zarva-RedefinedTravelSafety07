@@ -35,3 +35,4 @@ router.post("/notify", async (req, res) => {
     return res.status(500).json({ message: "Server error. Please try again." });
   }
 });
+export default router;
