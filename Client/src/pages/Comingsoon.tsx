@@ -269,12 +269,15 @@ export default function ComingSoon() {
                 </div>
                 
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  You're all set!
-                </h3>
-                
-                <p className="text-gray-600">
-                  We'll notify you as soon as we launch. Thank you for your interest!
-                </p>
+  {isAlreadyNotified ? "You're already on the list!" : "You're all set!"}
+</h3>
+
+<p className="text-gray-600">
+  {isAlreadyNotified
+    ? "Thanks! You're already part of our early access list."
+    : "We'll notify you as soon as we launch. Thank you for your interest!"}
+</p>
+
               </div>
               {/* Close Button */}
               <button
