@@ -49,7 +49,7 @@ const TravelSafetyStats: React.FC = () => {
 
   return (
     <div 
-      className="h-[50vh] sm:min-h-screen bg-cover bg-center bg-no-repeat p-3 sm:p-9 overflow-hidden"
+      className="h-[50vh] sm:h-auto  sm:min-h-screen bg-cover bg-center bg-no-repeat p-3 sm:p-9 overflow-hidden"
       style={{
         backgroundImage: "url('/bg.jpg')", // Assuming your background image is in public folder
         backgroundColor: '#BCB291' // Fallback color matching the beige tone
