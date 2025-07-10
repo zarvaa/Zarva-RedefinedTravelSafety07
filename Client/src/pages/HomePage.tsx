@@ -129,18 +129,19 @@ const HomePage: React.FC<Props> = ({
     }
 
     return (
-      <div className="flex-1 flex flex-col justify-center items-end text-right gap-6 px-4 sm:px-6 pb-32">
-        <h1 className="text-white text-3xl sm:text-5xl md:text-6xl mr-2 sm:mr-5 font-bold italic mb-4 sm:mb-8 leading-tight">
-          Redefining Travel Safety
-        </h1>
-        <button
-          onClick={isLoggedIn ? handleGetStarted : handleLogin}
-          className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-6 py-2 sm:px-10 sm:py-3 mr-4 sm:mr-72 rounded-full font-medium text-sm sm:text-lg transition-colors duration-200"
-        >
-          {isLoggedIn ? "Get Started" : "Sign Up"}
-        </button>
-      </div>
-    );
+  <div className="flex-1 flex flex-col justify-center items-end text-right gap-6 px-4 sm:px-6 pb-32 pt-20 sm:pt-0">
+    <h1 className="text-white text-2xl sm:text-5xl md:text-6xl mr-2 sm:mr-5 font-bold italic mb-4 sm:mb-8 leading-tight">
+      Redefining Travel Safety
+    </h1>
+    <button
+      onClick={isLoggedIn ? handleGetStarted : handleLogin}
+      className="bg-[#bcb291] hover:bg-[#a2957c] text-black px-6 py-2 sm:px-10 sm:py-3 mr-4 sm:mr-72 rounded-full font-medium text-sm sm:text-lg transition-colors duration-200"
+    >
+      {isLoggedIn ? "Get Started" : "Sign Up"}
+    </button>
+  </div>
+);
+
   };
 
   return (
