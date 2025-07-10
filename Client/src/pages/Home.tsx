@@ -365,18 +365,11 @@ useEffect(() => {
   };
 
   return (
-    <div className="relative h-screen w-full no-scrollbar">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/car.png#what')",
-        }}
-      >
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-      </div>
+    <div className="relative w-full no-scrollbar overflow-hidden">
 
+
+      {/* Background Image */}
+      
       {/* Main Content */}
          <HomePage
       isLoggedIn={isLoggedIn}

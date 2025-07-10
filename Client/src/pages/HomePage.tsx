@@ -35,7 +35,8 @@ const HomePage: React.FC<Props> = ({
     "Speech Recognition": "/speech.png",
   };
 
-  const currentSection = activeSection || hoveredSection || sections[autoRotateIndex];
+  const currentSection =
+    activeSection || hoveredSection || sections[autoRotateIndex];
 
   useEffect(() => {
     if (!activeSection) {
@@ -50,16 +51,13 @@ const HomePage: React.FC<Props> = ({
     if (currentSection === "Safer Routes") {
       const interval = setInterval(() => {
         setIsAnimating(true);
-
         setTimeout(() => {
           setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
         }, 300);
-
         setTimeout(() => {
           setIsAnimating(false);
         }, 400);
       }, 1000);
-
       return () => clearInterval(interval);
     } else {
       setCurrentWordIndex(0);
@@ -74,8 +72,8 @@ const HomePage: React.FC<Props> = ({
           <div
             className="text-white font-bold text-3xl sm:text-6xl italic mb-4 sm:mb-8"
             style={{
-              minHeight: window.innerWidth < 640 ? "40px" : "60px",
-              width: window.innerWidth < 640 ? "150px" : "200px",
+              minHeight: "40px",
+              width: "200px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -86,9 +84,11 @@ const HomePage: React.FC<Props> = ({
             <div
               className="transform-gpu"
               style={{
-                transform: isAnimating ? "rotateX(90deg) scale(0.8)" : "rotateX(0deg) scale(1)",
-                transformStyle: "preserve-3d",
-                transition: "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                transform: isAnimating
+                  ? "rotateX(90deg) scale(0.8)"
+                  : "rotateX(0deg) scale(1)",
+                transition:
+                  "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                 transformOrigin: "center center -20px",
               }}
             >
@@ -144,20 +144,21 @@ const HomePage: React.FC<Props> = ({
   };
 
   return (
-    <div className="fade-in-scale h-screen sm:min-h-screen relative bg-black overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
-        style={{
-          backgroundImage: `url('${sectionImages[currentSection as keyof typeof sectionImages]}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+    <div className="relative h-[50vh] sm:h-screen overflow-hidden bg-black">
+      {/* ✅ Limited height image and overlay */}
+      <div className="absolute top-0 left-0 w-full h-full z-0">
+        <div
+          className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-500"
+          style={{
+            backgroundImage: `url('${sectionImages[currentSection as keyof typeof sectionImages]}')`,
+          }}
+        >
+         
+        </div>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col h-[50vh] sm:min-h-screen">
+      {/* ✅ Main content */}
+      <div className="relative z-10 h-full flex flex-col">
         <div className="absolute top-2 sm:top-5 left-4 sm:left-10 z-20">
           <img
             src="/logo.png"
@@ -169,6 +170,7 @@ const HomePage: React.FC<Props> = ({
 
         {renderContent()}
 
+        {/* ✅ Buttons */}
         <div className="absolute bottom-0 left-0 right-0 bg-transparent">
           <div className="grid grid-cols-3">
             {sections.map((label, index) => (
@@ -185,14 +187,18 @@ const HomePage: React.FC<Props> = ({
                 className={`group relative p-3 sm:p-6 text-center ${
                   index < 2 ? "border-r border-white border-opacity-100" : ""
                 } hover:bg-black hover:bg-opacity-30 transition-all duration-300 ${
-                  activeSection === label || hoveredSection === label || currentSection === label
+                  activeSection === label ||
+                  hoveredSection === label ||
+                  currentSection === label
                     ? "bg-[#bcb291] bg-opacity-20"
                     : ""
                 }`}
               >
                 <div
                   className={`text-lg sm:text-3xl mb-1 sm:mb-2 font-semibold transition-colors duration-300 ${
-                    activeSection === label || hoveredSection === label || currentSection === label
+                    activeSection === label ||
+                    hoveredSection === label ||
+                    currentSection === label
                       ? "text-[#bcb291]"
                       : "text-white group-hover:text-amber-300"
                   }`}
