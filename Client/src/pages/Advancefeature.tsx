@@ -24,32 +24,32 @@ const AdvancedFeatures = () => {
       title: "Safer Cabs",
       icon: Camera,
       frontContent: "Safer Cabs",
-      backContent: "Every cab at Zarva is equipped with cameras, ensuring an added layer of security for both the party"
+      backContent: "Every cab at Zarva is equipped with cameras, ensuring an added layer of security for both the party and driver. Real-time monitoring and recording capabilities provide peace of mind throughout your journey."
     },
     {
       title: "Speech Recognition", 
       icon: Mic,
       frontContent: "Speech Recognition",
-      backContent: "If you ever feel unsafe, say a pre-set word three times which triggers immediate alerts, it tries to reach you if not able to, we will make system automated calls to your emergency contacts"
+      backContent: "If you ever feel unsafe, say a pre-set word three times which triggers immediate alerts. If we can't reach you, our system will automatically call your emergency contacts for immediate assistance."
     },
     {
       title: "Safer Routes",
       icon: MapPin, 
       frontContent: "Safer Routes",
-      backContent: "Our system smartly navigates away from high-risk areas, ensuring you travel through the safest and most efficient paths"
+      backContent: "Our intelligent navigation system smartly avoids high-risk areas, ensuring you travel through the safest and most efficient paths. Real-time route optimization for maximum security."
     }
   ];
 
   const defaultIcon = (IconComponent: React.ElementType, index: number) => {
     if (customIcons[index]) {
-      return <img src={customIcons[index]} alt="Custom icon" className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain transition-all duration-300 group-hover:scale-110 group-hover:brightness-110" />;
+      return <img src={customIcons[index]} alt="Custom icon" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain transition-all duration-300 group-hover:scale-110 group-hover:brightness-110" />;
     }
-    return <IconComponent size={48} className="sm:w-16 sm:h-16 md:w-20 md:h-20 transition-all duration-300 group-hover:scale-110" style={{ color: '#BCB291' }} />;
+    return <IconComponent size={40} className="sm:w-12 sm:h-12 md:w-14 md:h-14 transition-all duration-300 group-hover:scale-110" style={{ color: '#BCB291' }} />;
   };
 
   return (
     <div 
-      className="min-h-screen p-4 sm:p-8 relative"
+      className="min-h-screen p-4 sm:p-6 md:p-8 relative"
       style={{
         backgroundColor: '#2a2a2a',
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : `
@@ -79,11 +79,12 @@ const AdvancedFeatures = () => {
           Advanced Features
         </h1>
 
-        <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 flex-wrap max-w-7xl mx-auto">
+        {/* Improved card grid layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 max-w-7xl mx-auto px-4">
           {cardData.map((card, index) => (
             <div
               key={index}
-              className="group relative w-60 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[28rem] cursor-pointer transition-all duration-500 ease-out hover:scale-105"
+              className="group relative w-full h-80 sm:h-96 md:h-[420px] cursor-pointer transition-all duration-500 ease-out hover:scale-105"
               onClick={() => toggleCard(index)}
               onMouseEnter={() => setHoveredCard(index)}
               onMouseLeave={() => setHoveredCard(null)}
@@ -106,7 +107,7 @@ const AdvancedFeatures = () => {
               >
                 {/* Front of card */}
                 <div 
-                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center backface-hidden shadow-2xl transition-all duration-500"
+                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-6 sm:p-8 text-center backface-hidden shadow-2xl transition-all duration-500"
                   style={{ 
                     background: hoveredCard === index 
                       ? `linear-gradient(180deg, 
@@ -132,16 +133,16 @@ const AdvancedFeatures = () => {
                     borderRadius: '16px',
                   }}
                 >
-                  <div className="mb-4 sm:mb-6 md:mb-8 transition-all duration-300 group-hover:animate-bounce">
+                  <div className="mb-6 sm:mb-8 transition-all duration-300 group-hover:animate-bounce">
                     {defaultIcon(card.icon, index)}
                   </div>
                   <h3 
-                    className="text-xl sm:text-2xl md:text-3xl font-light leading-tight transition-all duration-300 group-hover:text-white" 
+                    className="text-xl sm:text-2xl md:text-3xl font-light leading-tight transition-all duration-300 group-hover:text-white mb-4" 
                     style={{ 
                       color: hoveredCard === index ? '#ffffff' : '#BCB291',
                       fontFamily: 'Playfair display',
                       letterSpacing: '0.02em',
-                      fontSize: 'clamp(1.5rem, 4vw, 3.6rem)',
+                      fontSize: 'clamp(1.25rem, 3vw, 2.5rem)',
                       textShadow: hoveredCard === index ? '0 0 20px rgba(188, 178, 145, 0.5)' : 'none'
                     }}
                   >
@@ -150,13 +151,13 @@ const AdvancedFeatures = () => {
                   
                   {/* Hover indicator */}
                   <div 
-                    className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 transition-all duration-300"
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 transition-all duration-300"
                     style={{
                       opacity: hoveredCard === index ? 1 : 0,
                       transform: `translateX(-50%) translateY(${hoveredCard === index ? '0' : '10px'})`,
                     }}
                   >
-                    <div className="text-xs sm:text-sm text-white bg-black bg-opacity-50 px-2 sm:px-3 py-1 rounded-full">
+                    <div className="text-xs sm:text-sm text-white bg-black bg-opacity-50 px-3 py-2 rounded-full">
                       Click to flip
                     </div>
                   </div>
@@ -164,7 +165,7 @@ const AdvancedFeatures = () => {
 
                 {/* Back of card */}
                 <div 
-                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center backface-hidden rotate-y-180 shadow-2xl transition-all duration-500"
+                  className="absolute inset-0 w-full h-full rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-6 sm:p-8 text-center backface-hidden rotate-y-180 shadow-2xl transition-all duration-500"
                   style={{ 
                     background: hoveredCard === index 
                       ? `linear-gradient(185deg, 
@@ -182,19 +183,27 @@ const AdvancedFeatures = () => {
                     transform: 'rotateY(180deg)',
                   }}
                 >
-                  <p 
-                    className="text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6 md:mb-8 transition-all duration-300" 
-                    style={{ 
-                      color: hoveredCard === index ? '#ffffff' : '#BCB291',
-                      fontFamily: 'sans-serif',
-                      lineHeight: '1.6',
-                      fontSize: 'clamp(0.9rem, 2.5vw, 1.4rem)'
-                    }}
-                  >
-                    {card.backContent}
-                  </p>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <p 
+                      className="text-sm sm:text-base md:text-lg leading-relaxed mb-6 transition-all duration-300 overflow-hidden" 
+                      style={{ 
+                        color: hoveredCard === index ? '#ffffff' : '#BCB291',
+                        fontFamily: 'sans-serif',
+                        lineHeight: '1.6',
+                        fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 6,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {card.backContent}
+                    </p>
+                  </div>
+                  
                   <button 
-                    className="px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-110 hover:shadow-lg text-xs sm:text-sm"
+                    className="px-6 sm:px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-110 hover:shadow-lg text-sm sm:text-base mt-auto"
                     style={{ 
                       backgroundColor: hoveredCard === index ? '#ffffff' : '#BCB291',
                       color: hoveredCard === index ? '#2a2a2a' : '#2a2a2a',
