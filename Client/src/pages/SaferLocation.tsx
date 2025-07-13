@@ -235,11 +235,11 @@ const SaferRoutesApp = () => {
     }}
   >
     {/* Main Content Container - Responsive Layout */}
-    <div className="flex flex-col lg:flex-row h-full pt-8 lg:pt-16 px-6 lg:px-16 gap-8 lg:gap-16 pb-8 lg:pb-16">
+    <div className="flex flex-col lg:flex-row h-screen pt-8 lg:pt-16 px-6 lg:px-16 gap-8 lg:gap-16 pb-8 lg:pb-16">
       {/* Left Card - Safer Routes Form */}
       <div className="w-full lg:w-[36rem] z-10 transition-all duration-300 hover:scale-105 lg:flex-shrink-0 order-2 lg:order-1">
         <div
-          className="bg-white rounded-2xl p-8 lg:p-10 border-2 border-gray-300 transition-all duration-300 hover:shadow-xl h-full"
+          className="bg-white rounded-2xl p-8 lg:p-10 border-2 border-gray-300 transition-all duration-300 hover:shadow-xl h-fit"
           style={{
             backgroundColor: '#d1cec5',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 2), 0 2px 4px -1px rgba(0, 0, 0,2)'
@@ -323,7 +323,7 @@ const SaferRoutesApp = () => {
       </div>
 
       {/* Right Side - Map Container */}
-      <div className="flex-grow relative rounded-2xl overflow-hidden border-2 border-gray-300 shadow-lg h-96 lg:h-full order-1 lg:order-2">
+      <div className="flex-grow relative rounded-2xl overflow-hidden border-2 border-gray-300 shadow-lg h-96 lg:h-[calc(100vh-8rem)] order-1 lg:order-2">
         <div ref={mapRef} className="w-full h-full"></div>
         <div
           ref={infoBarRef}
