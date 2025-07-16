@@ -13,6 +13,11 @@ const ZarvaVoiceRecognition = () => {
   const [status, setStatus] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{latitude: number; longitude: number} | null>(null);
   const recognitionRef = useRef<any>(null);
+  
+  // Emergency popup state
+  const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
+  const [detectedWord, setDetectedWord] = useState("");
+  const [emergencyTimeout, setEmergencyTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Placeholder for background image URL - you can replace this
   const bgImageUrl = "background.z.jpg";
@@ -59,6 +64,15 @@ const ZarvaVoiceRecognition = () => {
 
     setIsSystemReady(!!(savedWordsData && savedContacts));
   }, [savedWords, contact1, contact2]);
+
+  // Cleanup emergency timeout when component unmounts or popup closes
+  useEffect(() => {
+    return () => {
+      if (emergencyTimeout) {
+        clearTimeout(emergencyTimeout);
+      }
+    };
+  }, [emergencyTimeout]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -145,8 +159,22 @@ const ZarvaVoiceRecognition = () => {
   };
 
   const handleWordDetection = async (detectedWord: string) => {
+    // Show emergency popup instead of immediately making calls
+    setDetectedWord(detectedWord);
+    setShowEmergencyPopup(true);
+    
+    
+    // Set 30-second timeout for automatic emergency action
+    const timeout = setTimeout(() => {
+      handleEmergencyAction(detectedWord);
+    }, 30000);
+    
+    setEmergencyTimeout(timeout);
+  };
+
+  const handleEmergencyAction = async (word: string) => {
     const locationUrl = await getLocationString();
-    const message = `Emergency alert! The word "${detectedWord}" was detected. This is an automated message from Zarva Safety System. Current location: ${locationUrl}`;
+    const message = `Emergency alert! The word "${word}" was detected. This is an automated message from Zarva Safety System. Current location: ${locationUrl}`;
     
     // Call both contacts
     if (contact1) {
@@ -162,6 +190,26 @@ const ZarvaVoiceRecognition = () => {
     }
     if (contact2) {
       await initiatemessage(contact2, message);
+    }
+  };
+
+  const handleEmergencyResponse = (isInDanger: boolean) => {
+    // Clear the timeout
+    if (emergencyTimeout) {
+      clearTimeout(emergencyTimeout);
+      setEmergencyTimeout(null);
+    }
+    
+    // Close the popup
+    setShowEmergencyPopup(false);
+    setDetectedWord("");
+    
+    if (isInDanger) {
+      // User confirmed they are in danger, proceed with emergency action
+      handleEmergencyAction(detectedWord);
+    } else {
+      // User confirmed they are safe, no action needed
+      setStatus("Emergency alert cancelled. You're safe.");
     }
   };
 
@@ -469,6 +517,37 @@ const ZarvaVoiceRecognition = () => {
           </div>
         </div>
       </div>
+
+      {/* Emergency Check Popup */}
+      {showEmergencyPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <h2 className="text-xl font-bold text-black mb-4 text-center">
+              Emergency Check
+            </h2>
+            <p className="text-gray-700 mb-6 text-center">
+              The word "{detectedWord}" was detected. Are you in danger?
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => handleEmergencyResponse(true)}
+                className="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+              >
+                Yes, I'm in danger
+              </button>
+              <button
+                onClick={() => handleEmergencyResponse(false)}
+                className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+              >
+                No, I'm safe
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mt-4 text-center">
+              If no response within 30 seconds, emergency contacts will be notified automatically
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
