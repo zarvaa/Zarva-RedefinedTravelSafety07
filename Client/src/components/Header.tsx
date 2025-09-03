@@ -10,6 +10,9 @@ interface UserProfile {
   name?: string;
   email: string;
   phone?: string;
+  safePhone1?: string;
+  safePhone2?: string;
+  safeWorld?: string;
 }
 
 interface DriverProfile {
@@ -20,6 +23,9 @@ interface DriverProfile {
   vehicleNumber?: string;
   licenseNumber?: string;
   experience?: string;
+  safePhone1?: string;
+  safePhone2?: string;
+  safeWorld?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ showProfileSection = true }) => {
@@ -218,13 +224,39 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       const userData = await response.json();
       console.log('📋 Profile data from backend:', userData);
 
+      // Fetch safe data from localStorage
+      const savedContacts = localStorage.getItem("savedContacts");
+      const savedWords = localStorage.getItem("savedWords");
+      
+      let safeData = {};
+      if (savedContacts) {
+        const contacts = JSON.parse(savedContacts);
+        safeData = {
+          ...safeData,
+          safePhone1: contacts.contact1 || "",
+          safePhone2: contacts.contact2 || ""
+        };
+      }
+      
+      if (savedWords) {
+        const words = JSON.parse(savedWords);
+        // Join all saved words with comma for display
+        safeData = {
+          ...safeData,
+          safeWorld: words.join(", ")
+        };
+      }
+
+      // Merge backend data with safe data
+      const mergedData = { ...userData, ...safeData };
+
       // Set profile data from backend
-      setProfile(userData);
-      setFormData(userData);
-      setTempFormData(userData);
+      setProfile(mergedData);
+      setFormData(mergedData);
+      setTempFormData(mergedData);
       
       // Update localStorage with fresh data from backend
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(mergedData));
     } catch (err) {
       console.error("Profile fetch error:", err);
       setError("Failed to load profile");
@@ -233,10 +265,34 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       const userData = localStorage.getItem("user");
       if (userData) {
         const user = JSON.parse(userData);
-        setProfile(user);
-        setFormData(user);
-        setTempFormData(user);
-        console.log('📋 Using fallback data from localStorage:', user);
+        
+        // Fetch safe data from localStorage for fallback
+        const savedContacts = localStorage.getItem("savedContacts");
+        const savedWords = localStorage.getItem("savedWords");
+        
+        let safeData = {};
+        if (savedContacts) {
+          const contacts = JSON.parse(savedContacts);
+          safeData = {
+            ...safeData,
+            safePhone1: contacts.contact1 || "",
+            safePhone2: contacts.contact2 || ""
+          };
+        }
+        
+        if (savedWords) {
+          const words = JSON.parse(savedWords);
+          safeData = {
+            ...safeData,
+            safeWorld: words.join(", ")
+          };
+        }
+        
+        const mergedData = { ...user, ...safeData };
+        setProfile(mergedData);
+        setFormData(mergedData);
+        setTempFormData(mergedData);
+        console.log('📋 Using fallback data from localStorage:', mergedData);
       }
     } finally {
       setLoading(false);
@@ -274,6 +330,28 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       if (!res.ok) throw new Error("Update failed");
 
       const updatedData = await res.json();
+      
+      // Update safe data in localStorage if it was modified
+      if (tempFormData.safePhone1 !== undefined || tempFormData.safePhone2 !== undefined) {
+        const savedContacts = localStorage.getItem("savedContacts");
+        const contacts = savedContacts ? JSON.parse(savedContacts) : {};
+        
+        if (tempFormData.safePhone1 !== undefined) {
+          contacts.contact1 = tempFormData.safePhone1;
+        }
+        if (tempFormData.safePhone2 !== undefined) {
+          contacts.contact2 = tempFormData.safePhone2;
+        }
+        
+        localStorage.setItem("savedContacts", JSON.stringify(contacts));
+      }
+      
+      if (tempFormData.safeWorld !== undefined) {
+        // Split the safe world string back into an array
+        const words = tempFormData.safeWorld.split(",").map((word: string) => word.trim()).filter((word: string) => word);
+        localStorage.setItem("savedWords", JSON.stringify(words));
+      }
+      
       setProfile(updatedData);
       setFormData(updatedData); // Update the main form data
       setTempFormData(updatedData); // Update temporary data
@@ -387,7 +465,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-96 z-50">
           <div
-            className="bg-[#e1ded2] backdrop-blur-sm rounded-2xl p-6 mx-4 border border-[#bcb291] relative"
+            className="bg-[#e1ded2] backdrop-blur-sm rounded-md p-6 mx-4 border border-[#bcb291] relative"
             style={{ boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)" }}
           >
             {/* Close Button */}
@@ -403,7 +481,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
               {!editMode && !passwordMode && (
                 <button
                   onClick={startEditMode}
-                  className="p-2 text-gray-600 hover:text-[#bcb291] hover:bg-white hover:bg-opacity-50 rounded-lg transition-all duration-200"
+                  className="p-2 text-gray-600 hover:text-[#bcb291] hover:bg-white hover:bg-opacity-50 rounded-sm transition-all duration-200"
                 >
                   <Edit size={16} />
                 </button>
@@ -412,7 +490,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
             {message && (
               <div 
-                className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700"
+                className="mb-4 p-3 bg-green-50 border border-green-200 rounded-sm text-sm text-green-700"
                 style={{ boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)" }}
               >
                 {message}
@@ -421,7 +499,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
             {error && (
               <div 
-                className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600"
+                className="mb-4 p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-600"
                 style={{ boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)" }}
               >
                 {error}
@@ -429,57 +507,80 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
             )}
 
             {!editMode && !passwordMode ? (
-              <div className="space-y-4">
-                <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+              <>
+                <div className="grid grid-cols-2 grid-rows-3 gap-3">
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                     {isDriver ? "Full Name" : "Name"}
                   </label>
-                  <p className="text-gray-800 font-medium">
+                  <p className="text-gray-800 font-medium text-sm">
                     {isDriver ? (profile as DriverProfile).fullName : (profile as UserProfile).name}
                   </p>
                 </div>
 
-                <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Email</label>
-                  <p className="text-gray-800 font-medium">{profile.email}</p>
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Email</label>
+                  <p className="text-gray-800 font-medium text-sm">{profile.email}</p>
                 </div>
 
-                <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                     {isDriver ? "Mobile" : "Phone"}
                   </label>
-                  <p className="text-gray-800 font-medium">
+                  <p className="text-gray-800 font-medium text-sm">
                     {isDriver ? (profile as DriverProfile).mobile : (profile as UserProfile).phone}
                   </p>
                 </div>
 
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe Phone 1</label>
+                  <p className="text-gray-800 font-medium text-sm">
+                    {profile.safePhone1 || "Not set"}
+                  </p>
+                </div>
+
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe Phone 2</label>
+                  <p className="text-gray-800 font-medium text-sm">
+                    {profile.safePhone2 || "Not set"}
+                  </p>
+                </div>
+
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe World</label>
+                  <p className="text-gray-800 font-medium text-sm">
+                    {profile.safeWorld || "No words saved"}
+                  </p>
+                </div>
+
                 {isDriver && (
-                  <>
-                    <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Vehicle Model</label>
-                      <p className="text-gray-800 font-medium">{(profile as DriverProfile).vehicleModel}</p>
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Vehicle Model</label>
+                      <p className="text-gray-800 font-medium text-sm">{(profile as DriverProfile).vehicleModel}</p>
                     </div>
 
-                    <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Vehicle Number</label>
-                      <p className="text-gray-800 font-medium">{(profile as DriverProfile).vehicleNumber}</p>
+                    <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Vehicle Number</label>
+                      <p className="text-gray-800 font-medium text-sm">{(profile as DriverProfile).vehicleNumber}</p>
                     </div>
 
                     {(profile as DriverProfile).licenseNumber && (
-                      <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">License Number</label>
-                        <p className="text-gray-800 font-medium">{(profile as DriverProfile).licenseNumber}</p>
+                      <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">License Number</label>
+                        <p className="text-gray-800 font-medium text-sm">{(profile as DriverProfile).licenseNumber}</p>
                       </div>
                     )}
 
                     {(profile as DriverProfile).experience && (
-                      <div className="bg-white bg-opacity-40 rounded-lg p-4" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Experience</label>
-                        <p className="text-gray-800 font-medium">{(profile as DriverProfile).experience}</p>
+                      <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Experience</label>
+                        <p className="text-gray-800 font-medium text-sm">{(profile as DriverProfile).experience}</p>
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
+              </div>
 
                 <div className="pt-4 border-t border-[#bcb291] border-opacity-30 space-y-3">
                   <div className="flex justify-center">
@@ -497,7 +598,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     </button>
                   </div>  
                 </div>
-              </div>
+              </>
             ) : editMode ? (
               <div className="space-y-3">
                 <div>
@@ -509,7 +610,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     name={isDriver ? "fullName" : "name"}
                     value={tempFormData[isDriver ? "fullName" : "name"] || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                     style={{ color: '#1f2937' }}
                   />
                 </div>
@@ -523,7 +624,46 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     name={isDriver ? "mobile" : "phone"}
                     value={tempFormData[isDriver ? "mobile" : "phone"] || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    style={{ color: '#1f2937' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Safe Phone 1</label>
+                  <input
+                    type="text"
+                    name="safePhone1"
+                    value={tempFormData.safePhone1 || ""}
+                    onChange={handleChange}
+                    placeholder="Enter safe phone number 1"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    style={{ color: '#1f2937' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Safe Phone 2</label>
+                  <input
+                    type="text"
+                    name="safePhone2"
+                    value={tempFormData.safePhone2 || ""}
+                    onChange={handleChange}
+                    placeholder="Enter safe phone number 2"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                    style={{ color: '#1f2937' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Safe World</label>
+                  <input
+                    type="text"
+                    name="safeWorld"
+                    value={tempFormData.safeWorld || ""}
+                    onChange={handleChange}
+                    placeholder="Enter safe words (comma separated)"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                     style={{ color: '#1f2937' }}
                   />
                 </div>
@@ -537,7 +677,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                         name="vehicleModel"
                         value={tempFormData.vehicleModel || ""}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                         style={{ color: '#1f2937' }}
                       />
                     </div>
@@ -549,7 +689,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                         name="vehicleNumber"
                         value={tempFormData.vehicleNumber || ""}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                         style={{ color: '#1f2937' }}
                       />
                     </div>
@@ -561,7 +701,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                         name="licenseNumber"
                         value={tempFormData.licenseNumber || ""}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                         style={{ color: '#1f2937' }}
                       />
                     </div>
@@ -573,7 +713,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                         name="experience"
                         value={tempFormData.experience || ""}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                         style={{ color: '#1f2937' }}
                       />
                     </div>
@@ -583,7 +723,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                 <div className="flex space-x-2 pt-3">
                   <button
                     onClick={handleUpdate}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700 transition-colors text-sm"
                   >
                     <Save size={14} />
                     <span>Save</span>
@@ -594,7 +734,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                       setTempFormData(formData); // Reset to original data
                       setError("");
                     }}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gray-600 text-white rounded-sm hover:bg-gray-700 transition-colors text-sm"
                   >
                     <XCircle size={14} />
                     <span>Cancel</span>
@@ -642,7 +782,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                 <div className="flex space-x-2 pt-3">
                   <button
                     onClick={handlePasswordUpdate}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-[#a39b7e] text-white rounded-md hover:bg-[#bcb292] transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-[#a39b7e] text-white rounded-sm hover:bg-[#bcb292] transition-colors text-sm"
                   >
                     <Save size={14} />
                     <span>Update</span>
@@ -653,7 +793,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
                       setError("");
                     }}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gray-600 text-white rounded-sm hover:bg-gray-700 transition-colors text-sm"
                   >
                     <XCircle size={14} />
                     <span>Cancel</span>
