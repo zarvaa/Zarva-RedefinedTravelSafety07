@@ -26,20 +26,13 @@ export const sendSignupOTP = async (req, res) => {
   }
 };
 
-// ✅ Final Signup after OTP verification
+// ✅ Direct Signup without OTP
 export const addUser = async (req, res) => {
-  const { name, email, password, phone, otp } = req.body;
+  console.log('📝 Signup request received:', req.body);
+  const { name, email, password, phone } = req.body;
 
-  if (!name || !email || !password || !otp) {
-    return res.status(400).json({ message: "All fields & OTP are required." });
-  }
-
-  const stored = otpStore.get(email);
-  if (!stored) return res.status(400).json({ message: "OTP expired or not requested." });
-  if (stored.otp !== otp) return res.status(400).json({ message: "Invalid OTP." });
-  if (Date.now() > stored.expiresAt) {
-    otpStore.delete(email);
-    return res.status(400).json({ message: "OTP expired." });
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "Name, email, and password are required." });
   }
 
   const existingUser = await User.findOne({ email });
@@ -49,8 +42,6 @@ export const addUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword, phone });
     await newUser.save();
-
-    otpStore.delete(email);
 
     return res.status(201).json({
       _id: newUser._id,

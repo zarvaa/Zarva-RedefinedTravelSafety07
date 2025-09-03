@@ -96,48 +96,45 @@ useEffect(() => {
 
   const handleUserSignup = async () => {
     try {
-      if (!email || !password || !name) {
-        setError("Please fill all required fields.");
+      setError("");
+      
+      // Validate required fields
+      if (!name || !email || !password) {
+        setError("Please fill in all required fields.");
         return;
       }
+      
       if (password.length < 8) {
         setError("Password must be at least 8 characters long.");
         return;
       }
- 
-      if (!otpSent) {
-        // Step 1: Send OTP
-        const response = await fetch(
-          "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/send-otp",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          }
-        );
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Failed to send OTP");
-
-        alert("OTP sent to your email. Please check your inbox.");
-        setOtpSent(true);
+      if (!email.includes('@')) {
+        setError("Please enter a valid email address.");
         return;
       }
 
-      // Step 2: Verify OTP + Signup
-      if (!otp) {
-        setError("Please enter the OTP sent to your email.");
-        return;
-      }
-
-      const response = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/signup", {
+      console.log('📝 Home.tsx: Attempting signup for:', email);
+      
+      // Direct signup without OTP
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone, otp }),
+        body: JSON.stringify({ name, email, password, phone }),
       });
 
+      console.log('Home.tsx: Signup response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.message?.includes('already exists')) {
+          throw new Error('User already exists. Please login instead.');
+        }
+        throw new Error(errorData.message || "Signup failed");
+      }
+
       const user = await response.json();
-      if (!response.ok) throw new Error(user.message || "Signup failed");
+      console.log('Home.tsx: Signup successful:', user);
 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("email", user.email);
@@ -159,7 +156,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/send-otp",
+        "http://localhost:5000/api/auth/reset/send-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -190,7 +187,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/verify",
+        "http://localhost:5000/api/auth/reset/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -219,7 +216,7 @@ useEffect(() => {
 
   const handleUserLogin = async () => {
     try {
-      const response = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -261,7 +258,7 @@ useEffect(() => {
       if (!otpSent) {
         // Step 1: Send OTP
         const response = await fetch(
-          "https://zarva-redefinedtravelsafety17.onrender.com/api/auth/send-otp",
+          "http://localhost:5000/api/auth/send-otp",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -284,7 +281,7 @@ useEffect(() => {
       }
 
       const response = await fetch(
-        "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/registerDriver",
+                  "http://localhost:5000/api/driver/registerDriver",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -314,7 +311,7 @@ useEffect(() => {
   const handleDriverLogin = async () => {
     try {
       const response = await fetch(
-        "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/loginDriver",
+        "http://localhost:5000/api/driver/loginDriver",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

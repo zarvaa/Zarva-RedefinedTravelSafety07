@@ -160,6 +160,18 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
     fetchProfile();
   }, []);
 
+  // Listen for userDataChanged events to refresh profile
+  useEffect(() => {
+    const handleUserDataChange = () => {
+      fetchProfile();
+    };
+
+    window.addEventListener("userDataChanged", handleUserDataChange);
+    return () => {
+      window.removeEventListener("userDataChanged", handleUserDataChange);
+    };
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -176,36 +188,56 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
   }, []);
 
   const fetchProfile = async () => {
-    const email = localStorage.getItem("email");
-    const role = localStorage.getItem("role");
-
-    if (!email || !role) {
-      console.error("Email or role missing in localStorage");
-      setLoading(false);
-      return;
-    }
-
-    const endpoint =
-      role === "driver"
-        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
-        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
-
     try {
-      const res = await fetch(endpoint, {
+      const email = localStorage.getItem("email");
+      const role = localStorage.getItem("role");
+
+      if (!email || !role) {
+        console.error("Email or role missing in localStorage");
+        setLoading(false);
+        return;
+      }
+
+      // Determine the correct endpoint based on role
+      const endpoint = role === "driver" 
+        ? "http://localhost:5000/api/driver/profile"
+        : "http://localhost:5000/api/user/profile";
+
+      console.log('📋 Fetching profile from backend:', endpoint);
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-      if (!res.ok) throw new Error("Failed to fetch profile");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile: ${response.status}`);
+      }
 
-      const data = await res.json();
-      setProfile(data);
-      setFormData(data);
-      setTempFormData(data); // Set temporary data
+      const userData = await response.json();
+      console.log('📋 Profile data from backend:', userData);
+
+      // Set profile data from backend
+      setProfile(userData);
+      setFormData(userData);
+      setTempFormData(userData);
+      
+      // Update localStorage with fresh data from backend
+      localStorage.setItem("user", JSON.stringify(userData));
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("Profile fetch error:", err);
       setError("Failed to load profile");
+      
+      // Fallback to localStorage if backend fails
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        setProfile(user);
+        setFormData(user);
+        setTempFormData(user);
+        console.log('📋 Using fallback data from localStorage:', user);
+      }
     } finally {
       setLoading(false);
     }
@@ -227,8 +259,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
-        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
+        ? "http://localhost:5000/api/driver/profile"
+        : "http://localhost:5000/api/user/profile";
 
     const payload = { ...tempFormData, email }; // Use temporary data
 
@@ -245,8 +277,13 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       setProfile(updatedData);
       setFormData(updatedData); // Update the main form data
       setTempFormData(updatedData); // Update temporary data
+      
+      // Update localStorage with new data
+      localStorage.setItem("user", JSON.stringify(updatedData));
+      
       setError("");
       setEditMode(false);
+      setMessage("Profile updated successfully!");
       
       setTimeout(() => setMessage(""), 3000);
     } catch (err) {
@@ -274,8 +311,8 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
     const endpoint =
       role === "driver"
-        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/reset/reset-password-direct"
-        : "https://zarva-redefinedtravelsafety17.onrender.com/api/reset/reaset-password-direct";
+        ? "http://localhost:5000/api/auth/reset/direct"
+        : "http://localhost:5000/api/auth/reset/direct";
 
     try {
       const res = await fetch(endpoint, {
@@ -283,7 +320,6 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          currentPassword: passwordData.currentPassword,
           newPassword: passwordData.newPassword
         }),
       });

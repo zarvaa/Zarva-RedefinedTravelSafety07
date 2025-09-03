@@ -16,66 +16,110 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const clearForm = () => {
+    setEmail('');
+    setPassword('');
+    setName('');
+    setPhone('');
+    setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 Form submitted, isLogin:', isLogin);
+    
     if (isLoading) return;
 
+    // Clear previous errors
     setError('');
     setIsLoading(true);
 
     try {
       if (isLogin) {
-        // Login via Appwrite session
-        //const session = await createSession(email, password);
-        const user = await account.get();
-
-        localStorage.setItem('user', JSON.stringify(user));
-        window.dispatchEvent(new Event('userDataChanged'));
-        navigate('/feature');
+        // Handle Login
+        await handleLogin();
       } else {
-        // Signup via your Express backend and MongoDB
-        if (!email || !password || !name) {
-          setError('Please fill in all required fields.');
-          return;
-        }
-
-        if (password.length < 8) {
-          setError('Password must be at least 8 characters long.');
-          return;
-        }
-
-        const response = await fetch('https://zarva-redefinedtravelsafety-ne2y.onrender.com/addUser', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, password, phone }),
-        });
-
-        if (!response.ok) {
-          const res = await response.json();
-          throw new Error(res.message || 'Failed to sign up.');
-        }
-
-        const savedUser = await response.json();
-        localStorage.setItem('user', JSON.stringify(savedUser));
-        window.dispatchEvent(new Event('userDataChanged'));
-
-        navigate('/feature');
+        // Handle Signup
+        await handleSignup();
       }
     } catch (error: any) {
       console.error('Auth error:', error);
-      if (error.message?.includes('User already exists')) {
-        setError('User already exists. Please login.');
-        setIsLogin(true);
-      } else if (error.message?.includes('401')) {
-        setError('Invalid email or password.');
-      } else {
-        setError(error.message || 'Unexpected error occurred.');
-      }
+      setError(error.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      throw new Error('Please fill in email and password.');
+    }
+
+    console.log('🔐 Attempting login for:', email);
+    
+    const response = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    console.log('Login response status:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed.');
+    }
+
+    const user = await response.json();
+    console.log('Login successful:', user);
+    
+    localStorage.setItem('user', JSON.stringify(user));
+    window.dispatchEvent(new Event('userDataChanged'));
+    navigate('/feature');
+  };
+
+  const handleSignup = async () => {
+    // Validate required fields
+    if (!name || !email || !password) {
+      throw new Error('Please fill in all required fields.');
+    }
+
+    if (password.length < 8) {
+      throw new Error('Password must be at least 8 characters long.');
+    }
+
+    if (!email.includes('@')) {
+      throw new Error('Please enter a valid email address.');
+    }
+
+    console.log('📝 Attempting signup for:', email);
+    
+    const response = await fetch('http://localhost:5000/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password, phone }),
+    });
+
+    console.log('Signup response status:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.message?.includes('already exists')) {
+        throw new Error('User already exists. Please login instead.');
+      }
+      throw new Error(errorData.message || 'Signup failed.');
+    }
+
+    const user = await response.json();
+    console.log('Signup successful:', user);
+    
+    localStorage.setItem('user', JSON.stringify(user));
+    window.dispatchEvent(new Event('userDataChanged'));
+    navigate('/feature');
   };
   const handleOAuthLogin = async (provider: OAuthProvider) => {
     try {
@@ -117,7 +161,7 @@ const LoginPage = () => {
         )}
 
         {/* Form */}
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Name Field - Only for Sign Up */}
           {!isLogin && (
@@ -209,7 +253,7 @@ const LoginPage = () => {
 
           {/* Submit Button */}
           <button
-            onClick={handleSubmit}
+            type="submit"
             disabled={isLoading}
             className={`w-1/2 py-3 px-4 rounded-full font-medium text-sm text-black transition-all duration-200 mx-auto block ${
               isLoading 
@@ -223,7 +267,7 @@ const LoginPage = () => {
           >
             {isLoading ? 'Processing...' : (isLogin ? 'Login' : 'Sign Up')}
           </button>
-        </div>
+        </form>
 
         {/* Toggle Login/Signup */}
         <div className="text-center mt-6 ">
@@ -233,11 +277,7 @@ const LoginPage = () => {
           <button
             onClick={() => {
               setIsLogin(!isLogin);
-              setError('');
-              setEmail('');
-              setPassword('');
-              setName('');
-              setPhone('');
+              clearForm();
             }}
             className="text-blue-600 hover:text-blue-700 font-medium text-sm"
             disabled={isLoading}

@@ -26,34 +26,53 @@ const Profile = () => {
   }, []);
 
   const fetchProfile = async () => {
-    const email = localStorage.getItem("email");
-    const role = localStorage.getItem("role");
-
-    if (!email || !role) {
-      console.error("Email or role missing in localStorage");
-      setLoading(false);
-      return;
-    }
-
-    const endpoint =
-      role === "driver"
-        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
-        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
-
     try {
-      const res = await fetch(endpoint, {
+      const email = localStorage.getItem("email");
+      const role = localStorage.getItem("role");
+
+      if (!email || !role) {
+        console.error("Email or role missing in localStorage");
+        setLoading(false);
+        return;
+      }
+
+      // Determine the correct endpoint based on role
+      const endpoint = role === "driver" 
+        ? "http://localhost:5000/api/driver/profile"
+        : "http://localhost:5000/api/user/profile";
+
+      console.log('📋 Profile page - fetching from backend:', endpoint);
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-      if (!res.ok) throw new Error("Failed to fetch profile");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile: ${response.status}`);
+      }
 
-      const data = await res.json();
-      setProfile(data);
-      setFormData({ ...data, password: "" }); // Initialize password field empty
+      const userData = await response.json();
+      console.log('📋 Profile page - data from backend:', userData);
+
+      // Set profile data from backend
+      setProfile(userData);
+      setFormData({ ...userData, password: "" }); // Initialize password field empty
+      
+      // Update localStorage with fresh data from backend
+      localStorage.setItem("user", JSON.stringify(userData));
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("Profile fetch error:", err);
+      
+      // Fallback to localStorage if backend fails
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        setProfile(user);
+        setFormData({ ...user, password: "" });
+        console.log('📋 Profile page - using fallback data from localStorage:', user);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,8 +90,8 @@ const Profile = () => {
 
     const endpoint =
       role === "driver"
-        ? "https://zarva-redefinedtravelsafety17.onrender.com/api/driver/profile"
-        : "https://zarva-redefinedtravelsafety17.onrender.com/api/user/profile";
+        ? "http://localhost:5000/api/driver/profile"
+        : "http://localhost:5000/api/user/profile";
 
     const { password, ...profileData } = formData;
 
@@ -92,7 +111,7 @@ const Profile = () => {
 
       // If password provided, trigger password reset
       if (password && password.trim() !== "") {
-        const resetRes = await fetch("https://zarva-redefinedtravelsafety17.onrender.com/api/auth/reset/direct", {
+        const resetRes = await fetch("http://localhost:5000/api/auth/reset/direct", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

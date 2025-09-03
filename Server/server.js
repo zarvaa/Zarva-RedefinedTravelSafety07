@@ -17,12 +17,18 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "https://zarva-redefined-travel-safety07.vercel.app", // Your frontend's URL
+    origin: ["https://zarva-redefined-travel-safety07.vercel.app", "http://localhost:3000", "http://localhost:5173"], // Your frontend's URL
     credentials: true, // Allow cookies to be sent
   })
 );
 
 app.use(express.json());
+
+// Log all requests
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 const uri = process.env.MONGODB_URI || "";
 if (!uri) {
