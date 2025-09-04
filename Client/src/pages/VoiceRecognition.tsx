@@ -465,7 +465,7 @@ const ZarvaVoiceRecognition = () => {
             </label>
             <div className="w-full h-16 md:h-20 p-3 md:p-4 border-2 border-gray-300 rounded-lg bg-white overflow-y-auto">
               <p className="text-gray-800 text-sm md:text-base italic">
-                {interimTranscript || "Listening..."}
+                {interimTranscript || ""}
               </p>
             </div>
           </div>
