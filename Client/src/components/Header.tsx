@@ -463,11 +463,22 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       </button>
 
       {dropdownOpen && (
-        <div className="absolute right-0 mt-2 w-96 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
-            className="bg-[#e1ded2] backdrop-blur-sm rounded-md p-6 mx-4 border border-[#bcb291] relative"
-            style={{ boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)" }}
-          >
+            className="absolute inset-0 backdrop-blur-sm bg-black bg-opacity-50"
+            onClick={() => {
+              setDropdownOpen(false);
+              setEditMode(false);
+              setPasswordMode(false);
+              setMessage("");
+              setError("");
+            }}
+          ></div>
+          <div className="relative z-10 w-full max-w-md mx-4">
+            <div
+              className="bg-[#e1ded2] backdrop-blur-sm rounded-md p-6 border border-[#bcb291] relative"
+              style={{ boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)" }}
+            >
             {/* Close Button */}
             <button
               onClick={() => setDropdownOpen(false)}
@@ -531,7 +542,12 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     {isDriver ? (profile as DriverProfile).mobile : (profile as UserProfile).phone}
                   </p>
                 </div>
-
+                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe World</label>
+                  <p className="text-gray-800 font-medium text-sm">
+                    {profile.safeWorld || "No words saved"}
+                  </p>
+                </div>
                 <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe Phone 1</label>
                   <p className="text-gray-800 font-medium text-sm">
@@ -545,14 +561,6 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                     {profile.safePhone2 || "Not set"}
                   </p>
                 </div>
-
-                <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Safe World</label>
-                  <p className="text-gray-800 font-medium text-sm">
-                    {profile.safeWorld || "No words saved"}
-                  </p>
-                </div>
-
                 {isDriver && (
                   <div className="grid grid-cols-2 gap-3 mt-4">
                     <div className="bg-white bg-opacity-40 rounded-sm p-3" style={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
@@ -801,6 +809,7 @@ const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       )}
