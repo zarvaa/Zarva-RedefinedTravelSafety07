@@ -12,7 +12,6 @@ import Footer from './pages/Footer';
 import SaferLocation from './pages/SaferLocation';
 import AdvancedFeatures from './pages/Advancefeature';
 
-import AuthCallback from './pages/AuthCallback';
 import ProtectedRoute from './components/ProtectedRoute';
 import ComingSoon from './pages/Comingsoon';
 import VoiceRecognition from './pages/VoiceRecognition';
@@ -36,11 +35,6 @@ function App() {
         <div className="no-scrollbar">
           <Routes>
             {/* Public routes */}
-            <Route path="/auth-callback" element={
-              <WithHeaderLayout>
-                <AuthCallback />
-              </WithHeaderLayout>
-            } />
             <Route
               path="/"
               element={
