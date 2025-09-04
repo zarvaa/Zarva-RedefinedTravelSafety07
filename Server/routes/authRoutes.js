@@ -5,7 +5,8 @@ import {
   loginUser,
   sendResetOTP,
   verifyOTPAndResetPassword,
-  resetPasswordDirect
+  resetPasswordDirect,
+  googleLogin
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -21,5 +22,8 @@ router.post("/reset/verify", verifyOTPAndResetPassword);      // Verify OTP & Re
 
 // 🔒 Optional: Direct Password Reset (without OTP) for testing
 router.post("/reset/direct", resetPasswordDirect);
+
+// 🔑 Google Login
+router.post("/google", googleLogin);
 
 export default router;

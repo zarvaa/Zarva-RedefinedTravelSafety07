@@ -18,6 +18,7 @@ const ZarvaApp: React.FC<ZarvaAppProps> = ({ initialRole = "user", initialMode =
   const [isDriver, setIsDriver] = useState(initialRole === "driver");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { showLoginModal, closeLoginModal, openLoginModal,mode, role} = useAuthModal();
+  const [googleReady, setGoogleReady] = useState(false);
 
   useEffect(() => {
   const userData = localStorage.getItem("user");
@@ -31,6 +32,18 @@ useEffect(() => {
   setIsLogin(mode === 'login');
   setIsDriver(role === 'driver');
 }, [mode, role]);
+
+  // Wait for Google Identity Services to be available
+  useEffect(() => {
+    const check = () => {
+      if ((window as any).google && (window as any).google.accounts && (window as any).google.accounts.id) {
+        setGoogleReady(true);
+      } else {
+        setTimeout(check, 200);
+      }
+    };
+    check();
+  }, []);
 
   // Common States
   const [email, setEmail] = useState("");
@@ -81,7 +94,48 @@ useEffect(() => {
     setIsLogin(true);
   };
 
-  // Removed unused OAuth login handler
+  const handleGoogleCredential = async (credential: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: credential })
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Google login failed");
+      }
+      const user = await response.json();
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("email", user.email);
+      localStorage.setItem("role", "user");
+      window.dispatchEvent(new Event("userDataChanged"));
+      setIsLoggedIn(true);
+      closeModal();
+    } catch (err: any) {
+      console.error("Google auth error:", err);
+      setError(err.message || "Google authentication failed");
+    }
+  };
+
+  const initGoogleButton = () => {
+    if (!googleReady) return;
+    const gis = (window as any).google;
+    gis.accounts.id.initialize({
+      client_id: (import.meta as any).env.VITE_GOOGLE_CLIENT_ID || "",
+      callback: (res: any) => handleGoogleCredential(res.credential),
+      ux_mode: "popup",
+    });
+    const button = document.getElementById("googleSignInButtonHome");
+    if (button) {
+      gis.accounts.id.renderButton(button, {
+        theme: "outline",
+        size: "large",
+        shape: "pill",
+        text: "continue_with",
+      });
+    }
+  };
 
   const handleUserSignup = async () => {
     try {
@@ -688,8 +742,19 @@ useEffect(() => {
               </span>
               <div className="w-full border-t-4 border-[#bcb291]"></div>
             </div>
-
-            {/* Removed Appwrite OAuth buttons */}
+            {/* Google Sign-In */}
+            <div className="flex flex-col items-center">
+              <div id="googleSignInButtonHome" className="flex justify-center"></div>
+              {googleReady && (
+                <button
+                  type="button"
+                  onClick={initGoogleButton}
+                  className="mt-3 w-full py-2 border border-gray-300 rounded-lg text-gray-800 hover:bg-gray-50"
+                >
+                  Continue with Google
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

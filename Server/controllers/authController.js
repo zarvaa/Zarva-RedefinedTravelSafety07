@@ -2,8 +2,10 @@ import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import Driver from "../models/Driver.js";
 import { sendOTPEmail } from "../utils/email.js";
+import { OAuth2Client } from "google-auth-library";
 
 const otpStore = new Map(); // Temporary OTP store (use DB in production)
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ✅ Send OTP for Signup
 export const sendSignupOTP = async (req, res) => {
@@ -153,5 +155,53 @@ export const resetPasswordDirect = async (req, res) => {
   } catch (err) {
     console.error("Password reset error:", err);
     res.status(500).json({ message: "Server error during password reset." });
+  }
+};
+
+// ✅ Google Login / Signup
+export const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({ message: "Missing Google ID token" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return res.status(401).json({ message: "Invalid Google token" });
+    }
+
+    const googleId = payload.sub;
+    const email = payload.email;
+    const name = payload.name || email?.split("@")[0] || "User";
+
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        googleId,
+      });
+      await user.save();
+    } else if (!user.googleId) {
+      user.googleId = googleId;
+      await user.save();
+    }
+
+    return res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+    });
+  } catch (err) {
+    console.error("Google login error:", err);
+    return res.status(500).json({ message: "Google login failed" });
   }
 };
