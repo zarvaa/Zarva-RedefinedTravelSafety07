@@ -11,6 +11,5 @@ router.put('/user/profile', updateUserProfile);
 // DRIVER Routes
 router.post('/driver/profile', getDriverProfile);
 router.put('/driver/profile', updateDriverProfile);
-router.post("/reset/direct", resetPasswordDirect);
 
 export default router;
