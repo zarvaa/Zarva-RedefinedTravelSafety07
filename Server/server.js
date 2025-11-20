@@ -7,8 +7,8 @@ import authRoutes from "./routes/authRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
-
 import notifyRoutes from "./routes/notifyRoutes.js";
+import twilioRoutes from "./routes/twilioRoutes.js";
 
 dotenv.config();
 
@@ -17,8 +17,12 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: ["https://zarva-redefined-travel-safety07.vercel.app", "https://zarva.site"], // Your frontend's URLs
-    credentials: true, // Allow cookies to be sent
+    origin: [
+      "https://zarva-redefined-travel-safety07.vercel.app",
+      "https://zarva.site",
+      "https://www.zarva.site",
+    ],
+    credentials: true,
   })
 );
 
@@ -46,8 +50,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/driver", driverRoutes);
 app.use("/api", profileRoutes);
-
 app.use("/api", notifyRoutes);
+app.use("/api", twilioRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
