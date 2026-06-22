@@ -6,8 +6,7 @@ Zarva is a travel safety application that provides users with features like safe
 
 You can access the live application at the following URLs:
 
--   [https://zarva-redefined-travel-safety07.vercel.app/](https://zarva-redefined-travel-safety07.vercel.app/)
--   [www.zarva.site](http://www.zarva.site)
+-  https://zarva-be-safe.vercel.app/
 
 ## Key Features
 
