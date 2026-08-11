@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "https://backendzarva.onrender.com";
+
 const ZarvaVoiceRecognition = () => {
   const [wordInput, setWordInput] = useState("");
   const [contact1, setContact1] = useState("");
@@ -213,45 +216,86 @@ const ZarvaVoiceRecognition = () => {
     }
   };
 
+  const ensureIndianNumber = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "");
+    if (digitsOnly.length === 12 && digitsOnly.startsWith("91")) {
+      return `+${digitsOnly.slice(-12)}`;
+    }
+    const lastTenDigits = digitsOnly.slice(-10);
+    return lastTenDigits.length === 10 ? `+91${lastTenDigits}` : "";
+  };
+
   const initiateCall = async (toNumber: string, newmessage: string) => {
+    const formattedNumber = ensureIndianNumber(toNumber);
+    if (!formattedNumber) {
+      setStatus(
+        "Invalid contact number. Please provide a 10-digit Indian mobile number."
+      );
+      return;
+    }
+
     try {
-      const response = await fetch("https://backendzarva.onrender.com/api/twilio-call", {
+      const response = await fetch(`${BACKEND_URL}/api/twilio-call`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          to: toNumber,
+          to: formattedNumber,
           message: newmessage,
         }),
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to initiate the call.");
+      }
       console.log(data);
-      setStatus(`Call initiated to ${toNumber}: ${data.sid}`);
+      setStatus(`Call initiated to ${formattedNumber}: ${data.sid}`);
     } catch (error) {
-      setStatus(`Error making call to ${toNumber}`);
+      console.error(error);
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : `Error making call to ${formattedNumber}`
+      );
     }
   };
 
   const initiatemessage = async (toNumber: string, newmessage: string) => {
+    const formattedNumber = ensureIndianNumber(toNumber);
+    if (!formattedNumber) {
+      setStatus(
+        "Invalid contact number. Please provide a 10-digit Indian mobile number."
+      );
+      return;
+    }
+
     try {
-      const response = await fetch("https://backendzarva.onrender.com/api/twilio-message", {
+      const response = await fetch(`${BACKEND_URL}/api/twilio-message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          to: toNumber,
+          to: formattedNumber,
           messageText: newmessage,
         }),
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to send the message.");
+      }
       console.log(data);
-      setStatus(`Message sent to ${toNumber}: ${data.sid}`);
+      setStatus(`Message sent to ${formattedNumber}: ${data.sid}`);
     } catch (error) {
-      setStatus(`Error sending message to ${toNumber}`);
+      console.error(error);
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : `Error sending message to ${formattedNumber}`
+      );
     }
   };
 
